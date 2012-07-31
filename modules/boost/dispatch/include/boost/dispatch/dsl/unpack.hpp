@@ -138,7 +138,10 @@ BOOST_PP_REPEAT_FROM_TO( 1
 
     template<class This, class Expr>
     struct result<This(Expr)>
-     : dispatch::meta::call<Tag(Expr, State&)>
+     : dispatch::meta::result_of< typename dispatch::meta::
+         dispatch_call<Tag(Expr, State&)>::type
+         (Expr, State&)
+       >
     {
     };
 
@@ -146,7 +149,8 @@ BOOST_PP_REPEAT_FROM_TO( 1
     BOOST_FORCEINLINE typename result<with_state(Expr&)>::type
     operator()(Expr& expr) const
     {
-      return typename dispatch::functor<Tag>()(expr, state);
+      return typename dispatch::meta::
+             dispatch_call<Tag(Expr&, State&)>::type()(expr, state);
     }
 
     State& state;
@@ -166,7 +170,10 @@ BOOST_PP_REPEAT_FROM_TO( 1
 
     template<class This, class Expr>
     struct result<This(Expr)>
-     : dispatch::meta::call<Tag(Expr, State&, Data&)>
+     : dispatch::meta::result_of< typename dispatch::meta::
+         dispatch_call<Tag(Expr, State&, Data&)>::type
+         (Expr, State&, Data&)
+       >
     {
     };
 
@@ -174,7 +181,8 @@ BOOST_PP_REPEAT_FROM_TO( 1
     BOOST_FORCEINLINE typename result<with_state_data(Expr&)>::type
     operator()(Expr& expr) const
     {
-      return typename dispatch::functor<Tag>()(expr, state, data);
+      return typename dispatch::meta::
+             dispatch_call<Tag(Expr&, State&, Data&)>::type()(expr, state, data);
     }
 
     State& state;
