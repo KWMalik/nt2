@@ -37,12 +37,12 @@
  * \par
  *
  * \par Header file
- * 
+ *
  * \code
  * #include <nt2/include/functions/caurnd.hpp>
  * \endcode
- * 
- * 
+ *
+ *
  * \synopsis
  *
  * \code
@@ -53,13 +53,13 @@
  *     caurnd(const A0 & m, const A1 & l, ... dimensions);
  * }
  * \endcode
- *  
+ *
 **/
 
 namespace nt2 { namespace tag
-  {         
+  {
     /*!
-     * \brief Define the tag caurnd_ of functor caurnd 
+     * \brief Define the tag caurnd_ of functor caurnd
      *        in namespace nt2::tag for toolbox statistics
     **/
     struct caurnd_ : ext::unspecified_<caurnd_> { typedef ext::unspecified_<caurnd_> parent; };
@@ -70,11 +70,22 @@ namespace nt2 { namespace tag
  NT2_FUNCTION_IMPLEMENTATION(nt2::tag::caurnd_, caurnd, 4)
  NT2_FUNCTION_IMPLEMENTATION(nt2::tag::caurnd_, caurnd, 5)
  NT2_FUNCTION_IMPLEMENTATION(nt2::tag::caurnd_, caurnd, 6)
- NT2_FUNCTION_IMPLEMENTATION(nt2::tag::caurnd_, caurnd, 7)
 }
 
-#endif
+namespace nt2 { namespace container { namespace ext
+{
+  template<class Domain, class Expr, int N>
+  struct value_type<tag::caurnd_,Domain,N,Expr>
+  {
+    typedef typename  boost::proto::result_of
+                    ::child_c<Expr&,0>::value_type    child_t;
+    typedef typename meta::scalar_of<child_t>::type   base_t;
+    typedef typename meta::strip<base_t>::type        type;
+  };
 
-// /////////////////////////////////////////////////////////////////////////////
-// End of caurnd.hpp
-// /////////////////////////////////////////////////////////////////////////////
+  template<class Domain, class Expr, int N>
+  struct size_of<tag::caurnd_,Domain,N,Expr> : boxed_size_of<Expr,2>
+  {};
+} } }
+
+#endif
