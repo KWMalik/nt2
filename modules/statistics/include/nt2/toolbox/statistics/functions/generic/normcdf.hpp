@@ -16,6 +16,7 @@
 #include <nt2/include/functions/all.hpp>
 #include <nt2/include/functions/is_gez.hpp>
 #include <nt2/include/functions/bsxfun.hpp>
+#include <nt2/include/functions/colvect.hpp>
 #include <nt2/include/constants/half.hpp>
 #include <nt2/include/constants/sqrt_2o_2.hpp>
 
@@ -27,10 +28,7 @@ namespace nt2 { namespace ext
                               )
   {
     typedef A0 result_type; 
-    NT2_FUNCTOR_CALL(1)
-    {
-      return Half<A0>()*nt2::erfc(-Sqrt_2o_2<A0>()*a0); 
-    }
+    NT2_FUNCTOR_CALL(1){ return Half<A0>()*nt2::erfc(-Sqrt_2o_2<A0>()*a0); }
   };
   
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
@@ -40,12 +38,24 @@ namespace nt2 { namespace ext
                               )
   {
     typedef A0 result_type;     
-    NT2_FUNCTOR_CALL(2)
-      {
-        return Half<A0>()*nt2::erfc(Sqrt_2o_2<A0>()*(a1-a0)); 
-      }
+    NT2_FUNCTOR_CALL(2){ return Half<A0>()*nt2::erfc(Sqrt_2o_2<A0>()*(a1-a0)); }
   };
   
+  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
+                              , (A0)(A1)(A2)
+                              , (generic_< floating_<A0> >)
+                              (generic_< floating_<A1> >)
+                              (generic_< floating_<A2> >)  
+                              )
+  {
+    typedef A0 result_type;     
+    NT2_FUNCTOR_CALL(3)
+      {
+        BOOST_ASSERT_MSG(nt2::all(nt2::is_gez(nt2::colvect(a2))), "sigma(s) must be positive"); 
+        return Half<A0>()*nt2::erfc(Sqrt_2o_2<A0>*(a1-a0)/a2); 
+      }
+  };
+
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
                               , (A0)(A1)
                               , (ast_<A0>)
@@ -64,64 +74,51 @@ namespace nt2 { namespace ext
     }
   };
 
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
-                             , (A0)(A1)
-                             , (ast_<A0>)
-                             (generic_< floating_<A1> >)
-                             )
-  {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
-    typedef typename meta::call<tag::minus_(const A1&,const A0&)>::type                             T1;
-    typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
-    typedef typename meta::call<tag::erfc_(T2)>::type                                               T3;
-    typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
-    NT2_FUNCTOR_CALL(2)
-    {
-      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*(a1-a0)); 
-    }
-  };
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
+//                              , (A0)(A1)
+//                              , (ast_<A0>)
+//                              (generic_< floating_<A1> >)
+//                              )
+//   {
+//     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+//     typedef typename meta::call<tag::minus_(const A1&,const A0&)>::type                             T1;
+//     typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
+//     typedef typename meta::call<tag::erfc_(T2)>::type                                               T3;
+//     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
+//     NT2_FUNCTOR_CALL(2)
+//     {
+//       return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*(a1-a0)); 
+//     }
+//   };
 
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
-                             , (A0)(A1)
-                             , (generic_< floating_<A0> >)
-                              (ast_<A1>)
-                             )
-  {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
-    typedef typename meta::call<tag::minus_(const A1&,const A0&)>::type                             T1;
-    typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
-    typedef typename meta::call<tag::erfc_(T2)>::type                                               T3;
-    typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
-    NT2_FUNCTOR_CALL(2)
-    {
-      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*(a1-a0)); 
-    }
-  };
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
+//                              , (A0)(A1)
+//                              , (generic_< floating_<A0> >)
+//                               (ast_<A1>)
+//                              )
+//   {
+//     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+//     typedef typename meta::call<tag::minus_(const A1&,const A0&)>::type                             T1;
+//     typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
+//     typedef typename meta::call<tag::erfc_(T2)>::type                                               T3;
+//     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
+//     NT2_FUNCTOR_CALL(2)
+//     {
+//       return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*(a1-a0)); 
+//     }
+//   };
   
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
-                            , (A0)(A1)(A2)
-                              , (generic_< floating_<A0> >)
-                               (generic_< floating_<A1> >)
-                               (generic_< floating_<A2> >)  
-                            )
-  {
-    typedef A0 result_type;     
 
-    NT2_FUNCTOR_CALL(3)
-    {
-      BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive"); 
-      return Half<A0>()*nt2::erfc(Sqrt_2o_2<A0>*(a1-a0)/a2); 
-    }
-  };
 
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
                               , (A0)(A1)(A2)
-                              , (ast_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
-                              (ast_< floating_<A2> >)  
+                              , (ast_<A0>)
+                              (ast_<A1>)
+                              (ast_<A2>)  
                               )
   {
     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+    typedef typename meta::as_logical<sA0>::type                                                  bsA0; 
     typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::minus_>,const A1&,const A0&)>::type  T0;
     typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::divides_>,T0,const A2&)>::type       T1;
     typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
@@ -129,77 +126,78 @@ namespace nt2 { namespace ext
     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
     NT2_FUNCTOR_CALL(3)
     {
-      BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive"); 
-      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>*nt2::bsxfun(nt2::functor<tag::divides_>(),
+      bool z = bool(bsA0(nt2::all(nt2::is_gez(nt2::colvect(a2))))); 
+      BOOST_ASSERT_MSG(z, "sigma(s) must be positive"); 
+      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*nt2::bsxfun(nt2::functor<tag::divides_>(),
                                                         nt2::bsxfun(nt2::functor<tag::minus_>(), a1, a0),
                                                         a2)); 
     }
   };
 
-    NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
-                                , (A0)(A1)(A2)
-                                , (ast_< floating_<A0> >)
-                                (generic_< floating_<A1> >)
-                                (generic_< floating_<A2> >)  
-                                )
-      {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
-    typedef typename meta::call<tag::minus_(const A1&,const A0&)>::type                             T0;
-    typedef typename meta::call<tag::divides_(T0,const A2&)>::type                                  T1;
-    typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
-    typedef typename meta::call<tag::erfc_(T2)>::type                                               T3;
-    typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
-    NT2_FUNCTOR_CALL(3)
-    {
-      BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive"); 
-      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>*(a1-a0)/a2); 
-    }
-  };
+//     NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
+//                                 , (A0)(A1)(A2)
+//                                 , (ast_<A0>)
+//                                 (generic_< floating_<A1> >)
+//                                 (generic_< floating_<A2> >)  
+//                                 )
+//       {
+//     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+//     typedef typename meta::call<tag::minus_(const A1&,const A0&)>::type                             T0;
+//     typedef typename meta::call<tag::divides_(T0,const A2&)>::type                                  T1;
+//     typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
+//     typedef typename meta::call<tag::erfc_(T2)>::type                                               T3;
+//     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
+//     NT2_FUNCTOR_CALL(3)
+//     {
+//       BOOST_ASSERT_MSG(nt2::all(nt2::is_gez(nt2::colvect(a2))), "sigma(s) must be positive"); 
+//       return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*(a1-a0)/a2); 
+//     }
+//   };
 
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
-                            , (A0)(A1)(A2)
-                              , (generic_< floating_<A0> >)
-                               (ast_< floating_<A1> >)
-                               (generic_< floating_<A2> >)  
-                            )
-  {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
-    typedef typename meta::call<tag::minus_(const A1&,const A0&)>::type                             T0;
-    typedef typename meta::call<tag::divides_(T0,const A2&)>::type                                  T1;
-    typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
-    typedef typename meta::call<tag::erfc_(T2)>::type                                               T3;
-    typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
-    NT2_FUNCTOR_CALL(3)
-    {
-      BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive"); 
-      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>*(a1-a0)/a2); 
-    }
-  };
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
+//                             , (A0)(A1)(A2)
+//                               , (generic_< floating_<A0> >)
+//                                (ast_<A1>)
+//                                (generic_< floating_<A2> >)  
+//                             )
+//   {
+//     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+//     typedef typename meta::call<tag::minus_(const A1&,const A0&)>::type                             T0;
+//     typedef typename meta::call<tag::divides_(T0,const A2&)>::type                                  T1;
+//     typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
+//     typedef typename meta::call<tag::erfc_(T2)>::type                                               T3;
+//     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
+//     NT2_FUNCTOR_CALL(3)
+//     {
+//       BOOST_ASSERT_MSG(nt2::all(nt2::is_gez(nt2::colvect(a2))), "sigma(s) must be positive"); 
+//       return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*(a1-a0)/a2); 
+//     }
+//   };
 
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
-                            , (A0)(A1)(A2)
-                              , (generic_< floating_<A0> >)
-                               (generic_< floating_<A1> >)
-                               (ast_< floating_<A2> >)  
-                            )
-  {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
-    typedef typename meta::call<tag::minus_(const A1&,const A0&)>::type                             T0;
-    typedef typename meta::call<tag::divides_(T0,const A2&)>::type                                  T1;
-    typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
-    typedef typename meta::call<tag::erfc_(T2)>::type                                               T3;
-    typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
-    NT2_FUNCTOR_CALL(3)
-    {
-      BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive"); 
-      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>*(a1-a0)/a2); 
-    }
-  };
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
+//                             , (A0)(A1)(A2)
+//                               , (generic_< floating_<A0> >)
+//                                (generic_< floating_<A1> >)
+//                                (ast_<A2>)  
+//                             )
+//   {
+//     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+//     typedef typename meta::call<tag::minus_(const A1&,const A0&)>::type                             T0;
+//     typedef typename meta::call<tag::divides_(T0,const A2&)>::type                                  T1;
+//     typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
+//     typedef typename meta::call<tag::erfc_(T2)>::type                                               T3;
+//     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
+//     NT2_FUNCTOR_CALL(3)
+//     {
+//       BOOST_ASSERT_MSG(nt2::all(nt2::is_gez(nt2::colvect(a2))), "sigma(s) must be positive"); 
+//       return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*(a1-a0)/a2); 
+//     }
+//   };
 
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
                               , (A0)(A1)(A2)
-                              , (ast_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
+                              , (ast_<A0>)
+                              (ast_<A1>)
                               (generic_< floating_<A2> >)  
                               )
   {
@@ -211,15 +209,15 @@ namespace nt2 { namespace ext
     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
     NT2_FUNCTOR_CALL(3)
     {
-      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>*nt2::bsxfun(nt2::functor<tag::minus_>(), a1, a0)/a2); 
+      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*nt2::bsxfun(nt2::functor<tag::minus_>(), a1, a0)/a2); 
     }
   };
   
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
                               , (A0)(A1)(A2)
-                              , (ast_< floating_<A0> >)
+                              , (ast_<A0>)
                               (generic_< floating_<A1> >)
-                              (ast_< floating_<A2> >)  
+                              (ast_<A2>)  
                               )
   {
     typedef typename meta::scalar_of<A0>::type                                                     sA0;
@@ -230,15 +228,15 @@ namespace nt2 { namespace ext
     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
     NT2_FUNCTOR_CALL(3)
     {
-      BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive"); 
-      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>*nt2::bsxfun(nt2::functor<tag::divides_>(),a1-a0,a2)); 
+      BOOST_ASSERT_MSG(nt2::all(nt2::is_gez(nt2::colvect(a2))), "sigma(s) must be positive"); 
+      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*nt2::bsxfun(nt2::functor<tag::divides_>(),a1-a0,a2)); 
     }
   };
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normcdf_, tag::cpu_
                               , (A0)(A1)(A2)
                               , (generic_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
-                              (ast_< floating_<A2> >)  
+                              (ast_<A1>)
+                              (ast_<A2>)  
                               )
   {
     typedef typename meta::scalar_of<A0>::type                                                     sA0;
@@ -249,8 +247,8 @@ namespace nt2 { namespace ext
     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
     NT2_FUNCTOR_CALL(3)
     {
-      BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive"); 
-      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>*nt2::bsxfun(nt2::functor<tag::divides_>(),a1-a0,a2)); 
+      BOOST_ASSERT_MSG(nt2::all(nt2::is_gez(nt2::colvect(a2))), "sigma(s) must be positive"); 
+      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*nt2::bsxfun(nt2::functor<tag::divides_>(),a1-a0,a2)); 
     }
   };
 

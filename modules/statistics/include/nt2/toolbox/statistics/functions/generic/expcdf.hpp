@@ -67,19 +67,18 @@ namespace nt2 { namespace ext
     typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::if_zero_else_>,T0, T1)>::type         T2;
     typedef typename meta::call<tag::uminus_(T2)>::type                                              T3;
     typedef typename meta::call<tag::exp_(T3)>::type                                                 T4;
-    //    typedef typename meta::call<tag::oneminus_(T4)>::type                                   result_type;
-    typedef T2 result_type; 
+    typedef typename meta::call<tag::oneminus_(T4)>::type                                   result_type;
     NT2_FUNCTOR_CALL(2)
       {
         std::cout << 3 << std::endl; 
         //        BOOST_ASSERT_MSG(bool(nt2::all(nt2::is_gtz(nt2::colvect(a1)))), "mu parameter(s) must be positive"); 
-//         return nt2::oneminus(nt2::exp(-nt2::bsxfun(nt2::functor<tag::if_zero_else_>(),
-//                                                    nt2::is_ltz(a0),
-//                                                    nt2::bsxfun(nt2::functor<tag::divides_>(),a0,a1)
-//                                                    )
-//                                       )
-//                              );
-        return  nt2::bsxfun(nt2::functor<tag::if_zero_else_>(),nt2::is_ltz(a0),nt2::bsxfun(nt2::functor<tag::divides_>(),a0,a1)); 
+        return nt2::oneminus(nt2::exp(-nt2::bsxfun(nt2::functor<tag::if_zero_else_>(),
+                                                   nt2::is_ltz(a0),
+                                                   nt2::bsxfun(nt2::functor<tag::divides_>(),a0,a1)
+                                                   )
+                                      )
+                             );
+
       }
   };
   

@@ -64,5 +64,8 @@ NT2_TEST_CASE_TPL ( normcdf_2,  NT2_REAL_TYPES)
   NT2_DISPLAY(normcdf(a, a(_, 1)));
   NT2_DISPLAY(normcdf(a, a(1, _)));
   NT2_DISPLAY(normcdf(a, a)); 
+  NT2_DISPLAY(normcdf(a, a, a)); 
+  NT2_DISPLAY(normcdf(a, a, T(2))); 
+  NT2_DISPLAY(normcdf(a, a(_, 1), T(2))); 
 } // end of test for floating_
  
