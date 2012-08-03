@@ -46,7 +46,10 @@ namespace nt2 { namespace ext
                               )
   {
     typedef A0 result_type;     
-    NT2_FUNCTOR_CALL(3) { return Half<A0>()+nt2::atanpi(nt2::sqrt(a2)*(a0-a1)); }
+    NT2_FUNCTOR_CALL(3) {
+      BOOST_ASSERT_MSG(a2 > 0, "scale parameter must be positive"); 
+      return Half<A0>()+nt2::atanpi(nt2::sqrt(a2)*(a0-a1));
+    }
   };
   
   

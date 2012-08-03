@@ -50,24 +50,25 @@ NT2_TEST_CASE_TPL ( caurnd_real__2_0,  NT2_REAL_TYPES)
   b = caurnd(m, l);
   NT2_DISPLAY(b);
 
-//   nt2::table<T> c =  caurnd(T(0.0), T(1.0), 3);
-//   NT2_DISPLAY(c);
-//   nt2::table<T> d =  caurnd(T(0.0), T(1.0), 3, 5);
-//   NT2_DISPLAY(d);
+  nt2::table<T> c =  caurnd(T(0.0), T(1.0), 3);
+  NT2_DISPLAY(c);
+  nt2::table<T> d =  caurnd(T(0.0), T(1.0), 3, 5);
+  NT2_DISPLAY(d);
   nt2::table<T> e =caurnd(T(0.0), T(1.0), nt2::of_size(3, 2));
   NT2_DISPLAY(e);
-//   nt2::table<T> f =  caurnd(T(0.0), T(1.0), size(e));
+//  nt2::table<T> f =  caurnd(T(0.0), T(1.0), size(e));
 //   NT2_DISPLAY(f);
-//   nt2::table<T> m =  nt2::zeros(1, 3, nt2::meta::as_<T>());
-//   nt2::table<T> l =  nt2::ones(5, 1, nt2::meta::as_<T>());
-//   NT2_DISPLAY(m);
-//   NT2_DISPLAY(l);
-
-//   nt2::table<T> g =  caurnd(m, l, 5, 3);
-//   NT2_DISPLAY(g);
-//   nt2::table<T> h =  caurnd(m, l);
-//   NT2_DISPLAY(h);
-
+  {
+    nt2::table<T> m =  nt2::zeros(1, 3, nt2::meta::as_<T>());
+    nt2::table<T> l =  nt2::ones(5, 1, nt2::meta::as_<T>());
+    NT2_DISPLAY(m);
+    NT2_DISPLAY(l);
+    
+    nt2::table<T> g =  caurnd(m, l, 5, 3);
+    NT2_DISPLAY(g);
+    nt2::table<T> h =  caurnd(m, l);
+    NT2_DISPLAY(h);
+  }
  } // end of test for floating_
 
 

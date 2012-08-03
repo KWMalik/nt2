@@ -12,12 +12,12 @@ SET( SOURCES
   caupdf.cpp
   cauinv.cpp 
   caurnd.cpp
-#  normcdf.cpp
-#  normpdf.cpp
-#  unifpdf.cpp
-#  unifcdf.cpp 
-#  unifrnd.cpp
-#  expcdf.cpp 
+  normcdf.cpp
+  normpdf.cpp
+  unifpdf.cpp
+  unifcdf.cpp 
+  unifrnd.cpp
+  expcdf.cpp 
 # List of scalar test files for toolbox statistics
    )
 

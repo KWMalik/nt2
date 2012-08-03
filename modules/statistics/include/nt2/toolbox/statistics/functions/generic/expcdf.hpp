@@ -16,45 +16,15 @@
 #include <nt2/include/functions/is_gtz.hpp>
 #include <nt2/include/functions/is_ltz.hpp>
 #include <nt2/include/functions/bsxfun.hpp>
+#include <nt2/include/functions/colvect.hpp>
+#include <nt2/include/functions/uminus.hpp>
+#include <nt2/sdk/meta/type_id.hpp>
+//#include <nt2/table.hpp>
+#include <iostream>
 
 namespace nt2 { namespace ext
 {
-  namespace details
-  {
-    template < class A0, class A1> struct expcdf_1 // at least 2 ast 
-    {
-      typedef typename meta::call<tag::is_ltz_(const A0&)>::type                                           T0;
-      typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::divides_>,const A0&,const A1&)>::type     T1;
-      typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::if_zero_else_>,T0,T1)>::type                           T2;
-      typedef typename meta::call<tag::exp_(T2)>::type                                                     T3;
-      typedef typename meta::call<tag::oneminus_(T3)>::type                                       result_type; 
-      static inline result_type doit(const A0& a0,  const A1& a1) 
-      {
-        return nt2::oneminus(nt2::exp(-nt2::bsxfun(nt2::functor<tag::if_zero_else_>(),
-                                                   nt2::is_ltz(a0),
-                                                   nt2::bsxfun(nt2::functor<tag::divides_>(), a0, a1)
-                                                   )
-                                      )
-                             ); 
-        
-      }
-    };
-    
-    template < class A0, class A1> struct expcdf_2// no more than 1 ast 
-    {
-      typedef typename meta::call<tag::is_ltz_(const A0&)>::type                     T0;
-      typedef typename meta::call<tag::divides_(const A0&,const A1&)>::type          T1;
-      typedef typename meta::call<tag::if_zero_else_(T0, T1)>::type                  T2;
-      typedef typename meta::call<tag::exp_(T2)>::type                               T3;
-      typedef typename meta::call<tag::oneminus_(T3)>::type                 result_type; 
-      static inline result_type doit(const A0& a0,  const A1& a1) 
-      {
-        BOOST_ASSERT_MSG(nt2::all(nt2::is_gtz(a1)(nt2::_)), "mu parameter(s) must be positive"); 
-        return nt2::oneminus(nt2::exp(-nt2::if_zero_else(nt2::is_ltz(a0), a0/a1))); 
-      }
-    };
-  }    
-
+  
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::expcdf_, tag::cpu_
                               , (A0)
                               , (generic_< floating_<A0> >)
@@ -63,6 +33,7 @@ namespace nt2 { namespace ext
     typedef A0 result_type; 
     NT2_FUNCTOR_CALL(1)
       {
+        std::cout << 1 << std::endl; 
         return nt2::oneminus(nt2::exp(-nt2::if_zero_else(nt2::is_ltz(a0), a0))); 
       }
   };
@@ -76,47 +47,81 @@ namespace nt2 { namespace ext
     typedef A0 result_type;     
     NT2_FUNCTOR_CALL(2)
       {
-        BOOST_ASSERT_MSG(a1 > 0, "mu parameter must be positive"); 
+        std::cout << 2 << std::endl; 
+        BOOST_ASSERT_MSG(nt2::is_gtz(a1), "mu parameter must be positive"); 
         return nt2::oneminus(nt2::exp(-nt2::if_zero_else(nt2::is_ltz(a0/a1), a0))); 
+      }
+  };
+
+  
+
+
+  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::expcdf_, tag::cpu_
+                              , (A0)(A1)
+                              , (ast_<A0 >)
+                              (ast_<A1>)
+                              )
+  {
+    typedef typename meta::call<tag::is_ltz_(const A0&)>::type                                       T0;
+    typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::divides_>,const A0&,const A1&)>::type T1;
+    typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::if_zero_else_>,T0, T1)>::type         T2;
+    typedef typename meta::call<tag::uminus_(T2)>::type                                              T3;
+    typedef typename meta::call<tag::exp_(T3)>::type                                                 T4;
+    //    typedef typename meta::call<tag::oneminus_(T4)>::type                                   result_type;
+    typedef T2 result_type; 
+    NT2_FUNCTOR_CALL(2)
+      {
+        std::cout << 3 << std::endl; 
+        //        BOOST_ASSERT_MSG(bool(nt2::all(nt2::is_gtz(nt2::colvect(a1)))), "mu parameter(s) must be positive"); 
+//         return nt2::oneminus(nt2::exp(-nt2::bsxfun(nt2::functor<tag::if_zero_else_>(),
+//                                                    nt2::is_ltz(a0),
+//                                                    nt2::bsxfun(nt2::functor<tag::divides_>(),a0,a1)
+//                                                    )
+//                                       )
+//                              );
+        return  nt2::bsxfun(nt2::functor<tag::if_zero_else_>(),nt2::is_ltz(a0),nt2::bsxfun(nt2::functor<tag::divides_>(),a0,a1)); 
       }
   };
   
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::expcdf_, tag::cpu_
                               , (A0)(A1)
-                              , (ast_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
-                              )
-  {
-    typedef details::expcdf_1<A0, A1> inner; 
-    typedef typename inner::result_type result_type; 
-    NT2_FUNCTOR_CALL(2) { return inner::doit(a0, a1); }
-  };
-  
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::expcdf_, tag::cpu_
-                              , (A0)(A1)
-                              , (ast_< floating_<A0> >)
+                              , (ast_< A0 >)
                               (generic_< floating_<A1> >)
                               )
   {
-    typedef details::expcdf_2<A0, A1> inner; 
-    typedef typename inner::result_type result_type; 
-    NT2_FUNCTOR_CALL(2){ return inner::doit(a0, a1);  }
-    
+    typedef typename meta::call<tag::is_ltz_(const A0&)>::type                     T0;
+    typedef typename meta::call<tag::divides_(const A0&,const A1&)>::type          T1;
+    typedef typename meta::call<tag::if_zero_else_(T0, T1)>::type                  T2;
+    typedef typename meta::call<tag::uminus_(T2)>::type                            T3;
+    typedef typename meta::call<tag::exp_(T3)>::type                               T4;
+    typedef typename meta::call<tag::oneminus_(T4)>::type                 result_type; 
+    NT2_FUNCTOR_CALL(2)
+      {
+        std::cout << 4 << std::endl; 
+        //        BOOST_ASSERT_MSG(bool(nt2::all(nt2::is_gtz(nt2::colvect(a1)))), "mu parameter(s) must be positive"); 
+        return nt2::oneminus(nt2::exp(-nt2::if_zero_else(nt2::is_ltz(a0), a0/a1))); 
+      }
   };
   
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::expcdf_, tag::cpu_
                               , (A0)(A1)
                               , (generic_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
+                              (ast_< A1 >)
                               )
   {
-    typedef details::expcdf_2<A0, A1> inner; 
-    typedef typename inner::result_type result_type; 
-    NT2_FUNCTOR_CALL(2){ return inner::doit(a0, a1);  }
+    typedef typename meta::call<tag::is_ltz_(const A0&)>::type                     T0;
+    typedef typename meta::call<tag::divides_(const A0&,const A1&)>::type          T1;
+    typedef typename meta::call<tag::if_zero_else_(T0, T1)>::type                  T2;
+    typedef typename meta::call<tag::uminus_(T2)>::type                            T3;
+    typedef typename meta::call<tag::exp_(T3)>::type                               T4;
+    typedef typename meta::call<tag::oneminus_(T4)>::type                 result_type; 
+    NT2_FUNCTOR_CALL(2)
+      {
+        std::cout << 5 << std::endl; 
+        //        BOOST_ASSERT_MSG(bool(nt2::all(nt2::is_gtz(nt2::colvect(a1)))), "mu parameter(s) must be positive"); 
+        return nt2::oneminus(nt2::exp(-nt2::if_zero_else(nt2::is_ltz(a0), a0/a1))); 
+      }
   };
-  
-
-  
 } }
 
 #endif

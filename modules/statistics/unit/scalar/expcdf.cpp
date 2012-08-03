@@ -41,7 +41,7 @@ NT2_TEST_CASE_TPL ( expcdf_1,  (float))//NT2_REAL_TYPES)
   NT2_DISPLAY(expcdf(a)); 
 } // end of test for floating_
  
-NT2_TEST_CASE_TPL ( expcdf_2,  NT2_REAL_TYPES)
+NT2_TEST_CASE_TPL ( expcdf_2,  (float))//NT2_REAL_TYPES)
 {
   
   using nt2::expcdf;
@@ -56,11 +56,14 @@ NT2_TEST_CASE_TPL ( expcdf_2,  NT2_REAL_TYPES)
   NT2_TEST_ULP_EQUAL(expcdf(nt2::Inf<T>(), nt2::One<T>()), nt2::One<T>(), 0);
   NT2_TEST_ULP_EQUAL(expcdf(nt2::Minf<T>(), nt2::One<T>()), nt2::Zero<T>(), 0);
 
-  nt2::table<T> a = _(T(-5), T(1), T(5));
-  NT2_DISPLAY(a); 
-  NT2_DISPLAY(expcdf(a, nt2::One<T>()));
-  a = nt2::reshape(_(T(1), T(16)), 4, 4);
-  NT2_DISPLAY(expcdf(a, a)); 
+   nt2::table<T> a = _(T(-5), T(1), T(5));
+   NT2_DISPLAY(a); 
+   NT2_DISPLAY(expcdf(a, nt2::One<T>()));
+   NT2_DISPLAY(expcdf(nt2::One<T>(), a));
+   a = nt2::reshape(_(T(1), T(16)), 4, 4);
+   nt2::table<T> z = expcdf(a, a); 
+   NT2_DISPLAY(z);
+//   NT2_DISPLAY(expcdf(a, a));
 //   NT2_DISPLAY(expcdf(a, a(_, 1)));
 //   NT2_DISPLAY(expcdf(a, a(1, _)));
 } // end of test for floating_
