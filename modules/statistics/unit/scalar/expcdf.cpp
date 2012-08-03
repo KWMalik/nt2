@@ -61,10 +61,10 @@ NT2_TEST_CASE_TPL ( expcdf_2,  (float))//NT2_REAL_TYPES)
    NT2_DISPLAY(expcdf(a, nt2::One<T>()));
    NT2_DISPLAY(expcdf(nt2::One<T>(), a));
    a = nt2::reshape(_(T(1), T(16)), 4, 4);
-//    nt2::table<T> z = expcdf(a, a); 
-//    NT2_DISPLAY(z);
-//    NT2_DISPLAY(expcdf(a, a)); 
-//    NT2_DISPLAY(expcdf(a, a(_, 1)));
-//    NT2_DISPLAY(expcdf(a, a(1, _)));
+   nt2::table<T> z = expcdf(a, a); 
+   NT2_DISPLAY(z);
+   NT2_DISPLAY(expcdf(a, a)); 
+   NT2_DISPLAY(expcdf(a, a(_, 1)));
+   NT2_DISPLAY(expcdf(a, a(1, _)));
 } // end of test for floating_
  

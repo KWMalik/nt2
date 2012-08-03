@@ -126,8 +126,8 @@ namespace nt2 { namespace ext
     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
     NT2_FUNCTOR_CALL(3)
     {
-      bool z = bool(bsA0(nt2::all(nt2::is_gez(nt2::colvect(a2))))); 
-      BOOST_ASSERT_MSG(z, "sigma(s) must be positive"); 
+
+      //      BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gez(nt2::colvect(a2))), "sigma(s) must be positive"); 
       return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*nt2::bsxfun(nt2::functor<tag::divides_>(),
                                                         nt2::bsxfun(nt2::functor<tag::minus_>(), a1, a0),
                                                         a2)); 
