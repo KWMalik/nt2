@@ -15,6 +15,8 @@
 #include <nt2/table.hpp>
 #include <nt2/include/functions/bsxfun.hpp>
 #include <nt2/include/constants/invpi.hpp>
+#include <nt2/include/functions/is_gtz.hpp>
+#include <nt2/include/functions/globalall.hpp>
 
 namespace nt2 { namespace ext
 {
@@ -45,7 +47,11 @@ namespace nt2 { namespace ext
                             )
   {
     typedef A0 result_type;     
-    NT2_FUNCTOR_CALL(3) { return nt2::sqrt(a2)*caupdf(a2*a0, a1); }
+    NT2_FUNCTOR_CALL(3)
+      {
+        BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
+        return nt2::sqrt(a2)*caupdf(a2*a0, a1);
+      }
   };
 
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::caupdf_, tag::cpu_
@@ -81,6 +87,7 @@ namespace nt2 { namespace ext
     typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::multiplies_>,T2,T1)>::type      result_type;
     NT2_FUNCTOR_CALL(3)
     {
+      BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
       return nt2::bsxfun(nt2::functor<tag::multiplies_>(),
                          nt2::sqrt(a2),
                          caupdf(nt2::bsxfun(nt2::functor<tag::multiplies_>(), a0, a2), a1)

@@ -56,7 +56,7 @@ NT2_TEST_CASE_TPL ( cauinv_2,  NT2_REAL_TYPES)
   NT2_TEST_ULP_EQUAL(cauinv(nt2::One<T>(), nt2::One<T>()), nt2::Inf<T>(), 0);
   NT2_TEST_ULP_EQUAL(cauinv(nt2::Half<T>(), nt2::One<T>()), nt2::One<T>(), 0);
 
-  nt2::table<T> a = nt2::reshape(nt2::linspace(T(0), T(1), 16), 4, 4);
+  nt2::table<T> a = nt2::reshape(nt2::linspace(T(1), T(15), 16), 4, 4);
   NT2_DISPLAY(a); 
   NT2_DISPLAY(cauinv(a, nt2::One<T>()));
   NT2_DISPLAY(cauinv(a, a(_, 1)));

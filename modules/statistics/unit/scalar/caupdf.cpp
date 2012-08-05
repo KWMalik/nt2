@@ -54,6 +54,7 @@ NT2_TEST_CASE_TPL ( caupdf_2,  NT2_REAL_TYPES)
   NT2_DISPLAY(a); 
   NT2_DISPLAY(caupdf(a, nt2::One<T>()));
   a = nt2::reshape(_(T(1), T(16)), 4, 4);
+  NT2_DISPLAY(a); 
   NT2_DISPLAY(caupdf(a, a(_, 1)));
   NT2_DISPLAY(caupdf(a, a(1, _)));
   NT2_DISPLAY(caupdf(a, a));

@@ -13,6 +13,8 @@
 #include <nt2/include/functions/proper_tanpi.hpp>
 #include <nt2/include/functions/bsxfun.hpp>
 #include <nt2/include/constants/half.hpp>
+#include <nt2/include/functions/is_gtz.hpp>
+#include <nt2/include/functions/globalall.hpp>
 
 namespace nt2 { namespace ext
 {
@@ -29,29 +31,31 @@ namespace nt2 { namespace ext
                               , (A0)(A1)
                               , (generic_<floating_<A0> > )
                               (generic_<floating_<A1> >)
-                             )
+                              )
   {
     typedef A0 result_type;     
     NT2_FUNCTOR_CALL(2) { return nt2::proper_tanpi(a0-Half<A0>())+a1; }
   };
-
+  
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::cauinv_, tag::cpu_
-                            , (A0)(A1)(A2)
+                              , (A0)(A1)(A2)
                               , (generic_< floating_<A0> >)
-                               (generic_< floating_<A1> >)
-                               (generic_< floating_<A2> >)  
-                            )
+                              (generic_< floating_<A1> >)
+                              (generic_< floating_<A2> >)  
+                              )
   {
     typedef A0 result_type;     
-
-    NT2_FUNCTOR_CALL(3) { return nt2::proper_tanpi(a0-Half<A0>())/nt2::sqrt(a2)+a1; }
+    NT2_FUNCTOR_CALL(3) {
+      BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
+      return nt2::proper_tanpi(a0-Half<A0>())/nt2::sqrt(a2)+a1;
+    }
   };
-
+  
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::cauinv_, tag::cpu_
-                             , (A0)(A1)
-                             , (ast_<A0>)
-                             (ast_<A1>)
-                             )
+                              , (A0)(A1)
+                              , (ast_<A0>)
+                              (ast_<A1>)
+                              )
   {
     typedef typename meta::scalar_of<A0>::type                                                     sA0;
     typedef typename meta::call<tag::minus_(const A0&, sA0)>::type                                  T0; 
@@ -59,7 +63,7 @@ namespace nt2 { namespace ext
     typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::plus_>,T1,const A1&)>::type result_type; 
     
     NT2_FUNCTOR_CALL(2)
-    {
+      {
       return bsxfun(nt2::functor<tag::plus_>(), nt2::proper_tanpi(a0-Half<sA0>()), a1); 
     }
   };
@@ -80,6 +84,7 @@ namespace nt2 { namespace ext
     
     NT2_FUNCTOR_CALL(3)
     {
+      BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
       return bsxfun(nt2::functor<tag::plus_>(),
                     bsxfun(nt2::functor<tag::divides_>(),
                            nt2::proper_tanpi(a0-Half<sA0>()),
@@ -104,6 +109,7 @@ namespace nt2 { namespace ext
     
     NT2_FUNCTOR_CALL(3)
     {
+      BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
       return bsxfun(nt2::functor<tag::plus_>(),
                     nt2::proper_tanpi(a0-Half<sA0>())/nt2::sqrt(a2), 
                     a1); 
@@ -127,6 +133,7 @@ namespace nt2 { namespace ext
     
     NT2_FUNCTOR_CALL(3)
     {
+      BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
       return bsxfun(nt2::functor<tag::divides_>(),
                     nt2::proper_tanpi(a0-Half<sA0>()), nt2::sqrt(a2))+a1; 
     }
@@ -149,6 +156,7 @@ namespace nt2 { namespace ext
     
     NT2_FUNCTOR_CALL(3)
     {
+      BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
       return bsxfun(nt2::functor<tag::plus_>(),
                     nt2::proper_tanpi(a0-Half<sA0>())/nt2::sqrt(a2), 
                     a1); 

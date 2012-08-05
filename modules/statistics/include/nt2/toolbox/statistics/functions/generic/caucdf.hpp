@@ -13,6 +13,8 @@
 #include <nt2/include/functions/atanpi.hpp>
 #include <nt2/include/functions/rec.hpp>
 #include <nt2/include/functions/bsxfun.hpp>
+#include <nt2/include/functions/is_gtz.hpp>
+#include <nt2/include/functions/globalall.hpp>
 #include <nt2/include/constants/half.hpp>
 
 namespace nt2 { namespace ext
@@ -87,6 +89,7 @@ namespace nt2 { namespace ext
     
     NT2_FUNCTOR_CALL(3)
       {   
+        BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
         return Half<sA0>()+nt2::atanpi(nt2::sqrt(a2)*(nt2::bsxfun(nt2::functor<tag::minus_>(), a0, a1))); 
       }
   };
@@ -107,6 +110,7 @@ namespace nt2 { namespace ext
     
     NT2_FUNCTOR_CALL(3)
       {   
+        BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
         return Half<sA0>()+nt2::atanpi(nt2::bsxfun(nt2::functor<tag::multiplies_>(),nt2::sqrt(a2), a0-a1)); 
       }
   };
@@ -127,6 +131,7 @@ namespace nt2 { namespace ext
     
     NT2_FUNCTOR_CALL(3)
       {    
+        BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
         return Half<A0>()+nt2::atanpi(nt2::bsxfun(nt2::functor<tag::multiplies_>(),nt2::sqrt(a2), a0-a1)); 
       }
   };
@@ -147,6 +152,7 @@ namespace nt2 { namespace ext
 
     NT2_FUNCTOR_CALL(3)
       {   
+        BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
         return nt2::Half<sA0>()+nt2::atanpi(nt2::bsxfun(nt2::functor<tag::multiplies_>(),
                                                   nt2::sqrt(a2),
                                                   nt2::bsxfun(nt2::functor<tag::minus_>(), a0, a1)
