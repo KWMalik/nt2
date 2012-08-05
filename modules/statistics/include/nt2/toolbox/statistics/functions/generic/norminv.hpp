@@ -53,6 +53,7 @@ namespace nt2 { namespace ext
 
     NT2_FUNCTOR_CALL(3)
     {
+      BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(nt2::colvect(a2))), "sigma(s) must be positive"); 
       return fma(norminv(a0), a2, a1); 
     }
   };

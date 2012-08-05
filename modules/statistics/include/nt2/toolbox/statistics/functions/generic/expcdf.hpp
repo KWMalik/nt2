@@ -16,6 +16,7 @@
 #include <nt2/include/functions/is_gtz.hpp>
 #include <nt2/include/functions/is_ltz.hpp>
 #include <nt2/include/functions/bsxfun.hpp>
+#include <nt2/include/functions/globalall.hpp>
 #include <nt2/include/functions/colvect.hpp>
 #include <nt2/include/functions/uminus.hpp>
 #include <nt2/sdk/meta/type_id.hpp>
@@ -71,14 +72,13 @@ namespace nt2 { namespace ext
     NT2_FUNCTOR_CALL(2)
       {
         std::cout << 3 << std::endl; 
-        //        BOOST_ASSERT_MSG(bool(nt2::all(nt2::is_gtz(nt2::colvect(a1)))), "mu parameter(s) must be positive"); 
+        BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a1)), "mu parameter(s) must be positive"); 
         return nt2::oneminus(nt2::exp(-nt2::bsxfun(nt2::functor<tag::if_zero_else_>(),
                                                    nt2::is_ltz(a0),
                                                    nt2::bsxfun(nt2::functor<tag::divides_>(),a0,a1)
                                                    )
                                       )
-                             );
-
+                             );       
       }
   };
   
@@ -97,7 +97,7 @@ namespace nt2 { namespace ext
     NT2_FUNCTOR_CALL(2)
       {
         std::cout << 4 << std::endl; 
-        //        BOOST_ASSERT_MSG(bool(nt2::all(nt2::is_gtz(nt2::colvect(a1)))), "mu parameter(s) must be positive"); 
+        BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a1)), "mu parameter(s) must be positive"); 
         return nt2::oneminus(nt2::exp(-nt2::if_zero_else(nt2::is_ltz(a0), a0/a1))); 
       }
   };
@@ -117,7 +117,7 @@ namespace nt2 { namespace ext
     NT2_FUNCTOR_CALL(2)
       {
         std::cout << 5 << std::endl; 
-        //        BOOST_ASSERT_MSG(bool(nt2::all(nt2::is_gtz(nt2::colvect(a1)))), "mu parameter(s) must be positive"); 
+        BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a1)), "mu parameter(s) must be positive"); 
         return nt2::oneminus(nt2::exp(-nt2::if_zero_else(nt2::is_ltz(a0), a0/a1))); 
       }
   };

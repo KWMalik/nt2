@@ -17,6 +17,7 @@
 #include <nt2/include/functions/ulpdist.hpp>
 #include <nt2/include/functions/ones.hpp>
 #include <nt2/include/functions/zeros.hpp>
+#include <nt2/include/functions/reshape.hpp>
 #include <nt2/include/constants/invpi.hpp>
 #include <nt2/sdk/unit/tests.hpp>
 #include <nt2/sdk/unit/module.hpp>
@@ -56,10 +57,20 @@ NT2_TEST_CASE_TPL ( unifcdf_2,  NT2_REAL_TYPES)
   
   NT2_TEST_ULP_EQUAL(unifcdf(nt2::Half<T>(), nt2::One<T>(),nt2::Zero<T>())  , nt2::Nan<T>() , 0);
   
-  nt2::table<T> a = _(T(-5), T(1), T(5))/T(3);
+   nt2::table<T> a = _(T(-5), T(1), T(5))/T(3);
   NT2_DISPLAY(a); 
   NT2_DISPLAY(unifcdf(a, nt2::zeros(size(a), as_<T>()), nt2::ones(size(a), as_<T>())));
   NT2_DISPLAY(unifcdf(a, T(0), T(1)));
+  NT2_DISPLAY(unifcdf(a+T(0.5), a, a+T(1)));
+  NT2_DISPLAY(unifcdf(a+T(0.5), a(_, 1), a(_, 1)+T(1)));
+  a = nt2::reshape(_(T(-5), T(1), T(6))/T(10), 3, 4);
+  NT2_DISPLAY(a+T(0.5)); 
+  NT2_DISPLAY(a(_, 1));
+  NT2_DISPLAY(a(1, _)+T(1)); 
+  NT2_DISPLAY(unifcdf(a+T(0.5), a(_, 1), a(1, _)+T(1)));
   
 } // end of test for floating_ 
+  
+ 
+ 
  

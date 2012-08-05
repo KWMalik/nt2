@@ -209,7 +209,7 @@ namespace nt2 { namespace ext
     NT2_FUNCTOR_CALL(3)
     {
       BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(nt2::colvect(a2))), "sigma(s) must be positive"); 
-      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*nt2::bsxfun(nt2::functor<tag::minus_>(), a1, a0)/a2); 
+      return Half<sA0>()*nt2::erfc(Sqrt_2o_2<sA0>()*(nt2::bsxfun(nt2::functor<tag::minus_>(), a1, a0)/a2)); 
     }
   };
   

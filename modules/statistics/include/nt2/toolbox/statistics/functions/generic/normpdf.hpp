@@ -14,7 +14,7 @@
 #include <nt2/include/functions/rec.hpp>
 #include <nt2/include/functions/exp.hpp>
 #include <nt2/include/functions/sqr.hpp>
-#include <nt2/include/functions/all.hpp>
+#include <nt2/include/functions/globalall.hpp>
 #include <nt2/include/functions/is_gez.hpp>
 #include <nt2/include/functions/bsxfun.hpp>
 #include <nt2/include/constants/mhalf.hpp>
@@ -30,7 +30,7 @@ namespace nt2 { namespace ext
     typedef A0 result_type; 
     NT2_FUNCTOR_CALL(1)
     {
-      return nt2::exp(Mhalf<A0>()*sqr(a0))*Invsqrt_2pi<A0>();
+      return nt2::exp(Mhalf<A0>()*nt2::sqr(a0))*Invsqrt_2pi<A0>();
     }
   };
   
@@ -43,10 +43,25 @@ namespace nt2 { namespace ext
     typedef A0 result_type;     
     NT2_FUNCTOR_CALL(2)
       {
-        return nt2::exp(Mhalf<A0>()*sqr(a0-a1))*Invsqrt_2pi<A0>();
+        return nt2::exp(Mhalf<A0>()*nt2::sqr(a0-a1))*Invsqrt_2pi<A0>();
       }
   };
   
+  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
+                            , (A0)(A1)(A2)
+                              , (generic_< floating_<A0> >)
+                              (generic_< floating_<A1> >)
+                              (generic_< floating_<A2> >)  
+                            )
+  {
+    typedef A0 result_type;     
+    NT2_FUNCTOR_CALL(3)
+    {
+      BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gez(a2)), "sigma(s) must be positive"); 
+      return nt2::exp(Mhalf<A0>()*nt2::sqr((a0-a1)/a2))*Invsqrt_2pi<A0>();
+    }
+  };
+
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
                               , (A0)(A1)
                               , (ast_<A0>)
@@ -62,66 +77,52 @@ namespace nt2 { namespace ext
     
     NT2_FUNCTOR_CALL(2)
     {
-      return nt2::exp(Mhalf<sA0>()*sqr(bsxfun(nt2::functor<tag::minus_>(), a0, a1)))*Invsqrt_2pi<sA0>();
+      return nt2::exp(Mhalf<sA0>()*nt2::sqr(nt2::bsxfun(nt2::functor<tag::minus_>(), a0, a1)))*Invsqrt_2pi<sA0>();
     }
   };
 
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
-                             , (A0)(A1)
-                             , (ast_<A0>)
-                             (generic_< floating_<A1> >)
-                             )
-  {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
-    typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
-    typedef typename meta::call<tag::sqr_(T0)>::type                                                 T1;
-    typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
-    typedef typename meta::call<tag::exp_(T2)>::type                                                T3;
-    typedef typename meta::call<tag::multiplies_(T3, sA0)>::type                           result_type;
-    NT2_FUNCTOR_CALL(2)
-    {
-      return nt2::exp(Mhalf<sA0>()*sqr(a0-a1))*Invsqrt_2pi<sA0>();
-    }
-  };
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
+//                              , (A0)(A1)
+//                              , (ast_<A0>)
+//                              (generic_< floating_<A1> >)
+//                              )
+//   {
+//     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+//     typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
+//     typedef typename meta::call<tag::sqr_(T0)>::type                                                 T1;
+//     typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
+//     typedef typename meta::call<tag::exp_(T2)>::type                                                T3;
+//     typedef typename meta::call<tag::multiplies_(T3, sA0)>::type                           result_type;
+//     NT2_FUNCTOR_CALL(2)
+//     {
+//       return nt2::exp(Mhalf<sA0>()*sqr(a0-a1))*Invsqrt_2pi<sA0>();
+//     }
+//   };
 
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
-                             , (A0)(A1)
-                             , (generic_< floating_<A0> >)
-                              (ast_<A1>)
-                             )
-  {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
-    typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
-    typedef typename meta::call<tag::sqr_(T0)>::type                                                 T1;
-    typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
-    typedef typename meta::call<tag::exp_(T2)>::type                                                T3;
-    typedef typename meta::call<tag::multiplies_(T3, sA0)>::type                           result_type;
-    NT2_FUNCTOR_CALL(2)
-    {
-      return nt2::exp(Mhalf<sA0>()*sqr(a0-a1))*Invsqrt_2pi<sA0>();
-    }
-  };
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
+//                              , (A0)(A1)
+//                              , (generic_< floating_<A0> >)
+//                               (ast_<A1>)
+//                              )
+//   {
+//     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+//     typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
+//     typedef typename meta::call<tag::sqr_(T0)>::type                                                 T1;
+//     typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
+//     typedef typename meta::call<tag::exp_(T2)>::type                                                T3;
+//     typedef typename meta::call<tag::multiplies_(T3, sA0)>::type                           result_type;
+//     NT2_FUNCTOR_CALL(2)
+//     {
+//       return nt2::exp(Mhalf<sA0>()*sqr(a0-a1))*Invsqrt_2pi<sA0>();
+//     }
+//   };
   
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
-                            , (A0)(A1)(A2)
-                              , (generic_< floating_<A0> >)
-                              (generic_< floating_<A1> >)
-                              (generic_< floating_<A2> >)  
-                            )
-  {
-    typedef A0 result_type;     
-    NT2_FUNCTOR_CALL(3)
-    {
-      BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive"); 
-      return nt2::exp(Mhalf<A0>()*sqr((a0-a1)/a2))*Invsqrt_2pi<A0>();
-    }
-  };
 
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
                               , (A0)(A1)(A2)
-                              , (ast_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
-                              (ast_< floating_<A2> >)  
+                              , (ast_< A0 >)
+                              (ast_< A1 >)
+                              (ast_< A2 >)  
                               )
   {
     typedef typename meta::scalar_of<A0>::type                                                     sA0;
@@ -133,85 +134,87 @@ namespace nt2 { namespace ext
     typedef typename meta::call<tag::multiplies_(T4, sA0)>::type                           result_type;
     NT2_FUNCTOR_CALL(3)
     {
-      BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive"); 
-      return nt2::exp(Mhalf<A0>()*sqr(bsxfun(nt2::functor<tag::divides_>(),
-                                             bsxfun(nt2::functor<tag::minus_>(), a0, a1),
-                                             a2)))*Invsqrt_2pi<A0>();
+      BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gez(a2)), "sigma(s) must be positive"); 
+      return nt2::exp(Mhalf<A0>()*
+                      nt2::sqr(nt2::bsxfun(nt2::functor<tag::divides_>(),
+                                           nt2::bsxfun(nt2::functor<tag::minus_>(), a0, a1),
+                                           a2))
+                      )*Invsqrt_2pi<A0>();
 
     }
   };
 
-    NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
-                                , (A0)(A1)(A2)
-                                , (ast_< floating_<A0> >)
-                                (generic_< floating_<A1> >)
-                                (generic_< floating_<A2> >)  
-                                )
-      {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
-    typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
-    typedef typename meta::call<tag::sqr_(T0)>::type                                                 T1;
-    typedef typename meta::call<tag::multiplies_(A2,T1)>::type                                      T2;
-    typedef typename meta::call<tag::exp_(T2)>::type                                                T4;
-    typedef typename meta::call<tag::multiplies_(T2, sA0)>::type                           result_type;
-    NT2_FUNCTOR_CALL(3)
-    {
-      BOOST_ASSERT_MSG(is_gez(a2), "sigma must be positive");
-      A2 minv2sig2 =  Mhalf<sA0>()/sqr(a2); 
-      return nt2::exp(minv2sig2*sqr(a0-a1))*Invsqrt_2pi<A0>();
-    }
-  };
+//     NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
+//                                 , (A0)(A1)(A2)
+//                                 , (ast_< floating_<A0> >)
+//                                 (generic_< floating_<A1> >)
+//                                 (generic_< floating_<A2> >)  
+//                                 )
+//       {
+//     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+//     typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
+//     typedef typename meta::call<tag::sqr_(T0)>::type                                                 T1;
+//     typedef typename meta::call<tag::multiplies_(A2,T1)>::type                                      T2;
+//     typedef typename meta::call<tag::exp_(T2)>::type                                                T4;
+//     typedef typename meta::call<tag::multiplies_(T2, sA0)>::type                           result_type;
+//     NT2_FUNCTOR_CALL(3)
+//     {
+//       BOOST_ASSERT_MSG(is_gez(a2), "sigma must be positive");
+//       A2 minv2sig2 =  Mhalf<sA0>()/sqr(a2); 
+//       return nt2::exp(minv2sig2*sqr(a0-a1))*Invsqrt_2pi<A0>();
+//     }
+//   };
 
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
-                            , (A0)(A1)(A2)
-                              , (generic_< floating_<A0> >)
-                               (ast_< floating_<A1> >)
-                               (generic_< floating_<A2> >)  
-                            )
-  {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
-    typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
-    typedef typename meta::call<tag::sqr_(T0)>::type                                                 T1;
-    typedef typename meta::call<tag::multiplies_(A2,T1)>::type                                      T2;
-    typedef typename meta::call<tag::exp_(T2)>::type                                                T4;
-    typedef typename meta::call<tag::multiplies_(T2, sA0)>::type                           result_type;
-    NT2_FUNCTOR_CALL(3)
-    {
-      BOOST_ASSERT_MSG(is_gez(a2), "sigma must be positive"); 
-      A2 minv2sig2 =  Mhalf<sA0>()/sqr(a2); 
-      return nt2::exp(minv2sig2*sqr(a0-a1))*Invsqrt_2pi<A0>();
-    }
-  };
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
+//                             , (A0)(A1)(A2)
+//                               , (generic_< floating_<A0> >)
+//                                (ast_< floating_<A1> >)
+//                                (generic_< floating_<A2> >)  
+//                             )
+//   {
+//     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+//     typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
+//     typedef typename meta::call<tag::sqr_(T0)>::type                                                 T1;
+//     typedef typename meta::call<tag::multiplies_(A2,T1)>::type                                      T2;
+//     typedef typename meta::call<tag::exp_(T2)>::type                                                T4;
+//     typedef typename meta::call<tag::multiplies_(T2, sA0)>::type                           result_type;
+//     NT2_FUNCTOR_CALL(3)
+//     {
+//       BOOST_ASSERT_MSG(is_gez(a2), "sigma must be positive"); 
+//       A2 minv2sig2 =  Mhalf<sA0>()/sqr(a2); 
+//       return nt2::exp(minv2sig2*sqr(a0-a1))*Invsqrt_2pi<A0>();
+//     }
+//   };
 
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
-                            , (A0)(A1)(A2)
-                              , (generic_< floating_<A0> >)
-                               (generic_< floating_<A1> >)
-                               (ast_< floating_<A2> >)  
-                            )
-  {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
-    typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
-    typedef typename meta::call<tag::sqr_(const A2&)>::type                                         T1;
-    typedef typename meta::call<tag::divides_(T0,T1)>::type                                         T2;
-    typedef typename meta::call<tag::exp_(T2)>::type                                                T3;
-    typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                           result_type;
-    NT2_FUNCTOR_CALL(3)
-    {
-      BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive");
-      A0 tmp = Mhalf<A0>()*sqr(a0-a1); 
-      return nt2::exp(tmp/sqr(a2))*Invsqrt_2pi<A0>();
-    }
-  };
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
+//                             , (A0)(A1)(A2)
+//                               , (generic_< floating_<A0> >)
+//                                (generic_< floating_<A1> >)
+//                                (ast_< floating_<A2> >)  
+//                             )
+//   {
+//     typedef typename meta::scalar_of<A0>::type                                                     sA0;
+//     typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
+//     typedef typename meta::call<tag::sqr_(const A2&)>::type                                         T1;
+//     typedef typename meta::call<tag::divides_(T0,T1)>::type                                         T2;
+//     typedef typename meta::call<tag::exp_(T2)>::type                                                T3;
+//     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                           result_type;
+//     NT2_FUNCTOR_CALL(3)
+//     {
+//       BOOST_ASSERT_MSG(all(is_gez(a2)), "sigma(s) must be positive");
+//       A0 tmp = Mhalf<A0>()*sqr(a0-a1); 
+//       return nt2::exp(tmp/sqr(a2))*Invsqrt_2pi<A0>();
+//     }
+//   };
 
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
                               , (A0)(A1)(A2)
-                              , (ast_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
+                              , (ast_<A0 >)
+                              (ast_< A1 >)
                               (generic_< floating_<A2> >)  
                               )
   {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
+    typedef typename A0::value_type                                                                sA0;
     typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::minus_>,const A0&,const A1&)>::type  T0;
     typedef typename meta::call<tag::sqr_(T0)>::type                                                T1;
     typedef typename meta::call<tag::multiplies_(A2,T1)>::type                                      T2;
@@ -220,35 +223,35 @@ namespace nt2 { namespace ext
     NT2_FUNCTOR_CALL(3)
     {
       BOOST_ASSERT_MSG(is_gez(a2), "sigma must be positive"); 
-      A2 minv2sig2 =  Mhalf<sA0>()/sqr(a2); 
-      return nt2::exp(minv2sig2*sqr(bsxfun(nt2::functor<tag::minus_>(),a0,a1)))*Invsqrt_2pi<A0>();
+      A2 minv2sig2 =  Mhalf<sA0>()/nt2::sqr(a2); 
+      return nt2::exp(minv2sig2*nt2::sqr(nt2::bsxfun(nt2::functor<tag::minus_>(),a0,a1)))*Invsqrt_2pi<A0>();
     }
   };
   
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
                               , (A0)(A1)(A2)
-                              , (ast_< floating_<A0> >)
+                              , (ast_< A0 >)
                               (generic_< floating_<A1> >)
-                              (ast_< floating_<A2> >)  
+                              (ast_< A2 >)  
                               )
   {
-    typedef typename meta::scalar_of<A0>::type                                                     sA0;
+    typedef typename A0::value_type                                                                sA0;
     typedef typename meta::call<tag::minus_(const A0&,const A1&)>::type                             T0;
-    typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::divides_ >,T0,const A2&)>::type       T1;
+    typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::divides_ >,T0,const A2&)>::type      T1;
     typedef typename meta::call<tag::multiplies_(sA0, T1)>::type                                    T2; 
-    typedef typename meta::call<tag::exp_(T2)>::type                                               T3;
-    typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                          result_type;
+    typedef typename meta::call<tag::exp_(T2)>::type                                                T3;
+    typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                           result_type;
     NT2_FUNCTOR_CALL(3)
     {
-      return nt2::exp(Mhalf<A0>()*sqr(bsxfun(nt2::functor<tag::divides_>(),a0-a1,a2)))*Invsqrt_2pi<A0>();
+      return nt2::exp(Mhalf<A0>()*nt2::sqr(nt2::bsxfun(nt2::functor<tag::divides_>(),a0-a1,a2)))*Invsqrt_2pi<A0>();
 
     }
   };
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::normpdf_, tag::cpu_
                               , (A0)(A1)(A2)
                               , (generic_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
-                              (ast_< floating_<A2> >)  
+                              (ast_<A1>)
+                              (ast_<A2>)  
                               )
   {
     typedef typename meta::scalar_of<A0>::type                                                     sA0;
@@ -259,7 +262,7 @@ namespace nt2 { namespace ext
     typedef typename meta::call<tag::multiplies_(sA0, T3)>::type                           result_type;
     NT2_FUNCTOR_CALL(3)
     {
-      return nt2::exp(Mhalf<A0>()*sqr(bsxfun(nt2::functor<tag::divides_>(),a0-a1,a2)))*Invsqrt_2pi<A0>();
+      return nt2::exp(Mhalf<A0>()*nt2::sqr(nt2::bsxfun(nt2::functor<tag::divides_>(),a0-a1,a2)))*Invsqrt_2pi<A0>();
 
     }
   };
