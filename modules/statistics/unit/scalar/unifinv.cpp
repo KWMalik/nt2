@@ -59,7 +59,7 @@ NT2_TEST_CASE_TPL ( unifinv_2,  NT2_REAL_TYPES)
   nt2::table<T> a = _(T(-5), T(1), T(5))/T(3);
   NT2_DISPLAY(a); 
   NT2_DISPLAY(unifinv(a, nt2::zeros(size(a), as_<T>()), nt2::ones(size(a), as_<T>())));
-  NT2_DISPLAY(unifinv(a, T(0), T(1)));
+//   NT2_DISPLAY(unifinv(a, T(0), T(1)));
   
 } // end of test for floating_ 
  

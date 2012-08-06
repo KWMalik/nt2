@@ -17,6 +17,7 @@ SET( SOURCES
   unifpdf.cpp
   unifcdf.cpp 
   unifrnd.cpp
+  unifinv.cpp
   expcdf.cpp 
 # List of scalar test files for toolbox statistics
    )
