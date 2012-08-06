@@ -57,17 +57,20 @@ NT2_TEST_CASE_TPL ( unifpdf_2,  NT2_REAL_TYPES)
   
 //   NT2_TEST_ULP_EQUAL(unifpdf(nt2::Half<T>(), nt2::One<T>(),nt2::Zero<T>())  , nt2::Nan<T>() , 0);
   
-//   nt2::table<T> a = _(T(-5), T(1), T(5))/T(3);
-//   NT2_DISPLAY(a); 
-//   NT2_DISPLAY(unifpdf(a, nt2::zeros(size(a), as_<T>()), nt2::ones(size(a), as_<T>())));
-//   NT2_DISPLAY(unifpdf(a, T(0), T(1)));
- //  {
-//     nt2::table<T> a = nt2::reshape(nt2::linspace(T(0), T(1), 50), 10, 5);
-//     NT2_DISPLAY(a); 
-//     NT2_DISPLAY(unifpdf(a, T(0), T(1)));
-//     NT2_DISPLAY(unifpdf(a, T(0), _(T(1), T(5))));
-//     NT2_DISPLAY(unifpdf(a, T(0), _(T(1), T(10))(nt2::_))); 
-//   }
+   nt2::table<T> a = _(T(-5), T(1), T(5))/T(3);
+   NT2_DISPLAY(a); 
+   NT2_DISPLAY(unifpdf(a, nt2::zeros(size(a), as_<T>()), nt2::ones(size(a), as_<T>())));
+   NT2_DISPLAY(unifpdf(a, T(0), T(1)));
+ {
+    nt2::table<T> a = nt2::reshape(nt2::linspace(T(0), T(1), 50), 10, 5);
+    NT2_DISPLAY(a); 
+    NT2_DISPLAY(unifpdf(a, T(0), T(1)));
+    NT2_DISPLAY(unifpdf(a, T(0), _(T(1), T(5))));
+    NT2_DISPLAY(unifpdf(a, T(0), _(T(1), T(10))(nt2::_))); 
+  }
   
 } // end of test for floating_ 
+ 
+ 
+ 
  

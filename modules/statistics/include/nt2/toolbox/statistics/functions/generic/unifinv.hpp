@@ -42,7 +42,7 @@ namespace nt2 { namespace ext
       static inline result_type doit(const A0& a0,  const A1& a1,  const A2& a2) 
       {
         T z = bxsfun(nt2::functor<tag::minus_>(), a2, a1);//to schedule
-        return bsxfun3(nt2::functor<tag::fma_>(),
+        return tsxfun(nt2::functor<tag::fma_>(),
                        a0,
                        bsxfun(nt2::functor<tag::if_allbits_else_>(),
                               bsxfun(nt2::functor<tag::logical_or_>(), is_lez(z),
@@ -56,22 +56,22 @@ namespace nt2 { namespace ext
       }
     };
     
-    template < class A0, class A1, class A2 > struct unifinv_2// no more than 1 ast 
-    {
-      typedef typename meta::call<tag::minus_(const A2&,const A1&)>::type                   T;
-      typedef typename meta::call<tag::is_greater_(const A0&,const A2&)>::type             T0;
-      typedef typename meta::call<tag::is_less_(const A0&,const A1&)>::type                T1;
-      typedef typename meta::call<tag::logical_or_(T0, T1)>::type                          T2;
-      typedef typename meta::call<tag::is_lez_(T)>::type                                   T3;
-      typedef typename meta::call<tag::logical_or_(T, T3)>::type                           T4;
-      typedef typename meta::call<tag::if_allbits_else_(T4, T)>::type                      T5;
-      typedef typename meta::call<tag::fma_(const A0&, T5, const A1&)>::type      result_type; 
-      static inline result_type doit(const A0& a0,  const A1& a1,  const A2& a2) 
-      {
-        T z = a2-a1;
-        return fma(a0, if_allbits_else(logical_or(is_lez(z), logical_or(gt(a0, a2), lt(a0, a1))), z), a1); 
-      }
-    };
+//     template < class A0, class A1, class A2 > struct unifinv_2// no more than 1 ast 
+//     {
+//       typedef typename meta::call<tag::minus_(const A2&,const A1&)>::type                   T;
+//       typedef typename meta::call<tag::is_greater_(const A0&,const A2&)>::type             T0;
+//       typedef typename meta::call<tag::is_less_(const A0&,const A1&)>::type                T1;
+//       typedef typename meta::call<tag::logical_or_(T0, T1)>::type                          T2;
+//       typedef typename meta::call<tag::is_lez_(T)>::type                                   T3;
+//       typedef typename meta::call<tag::logical_or_(T, T3)>::type                           T4;
+//       typedef typename meta::call<tag::if_allbits_else_(T4, T)>::type                      T5;
+//       typedef typename meta::call<tag::fma_(const A0&, T5, const A1&)>::type      result_type; 
+//       static inline result_type doit(const A0& a0,  const A1& a1,  const A2& a2) 
+//       {
+//         T z = a2-a1;
+//         return fma(a0, if_allbits_else(logical_or(is_lez(z), logical_or(gt(a0, a2), lt(a0, a1))), z), a1); 
+//       }
+//     };
   }    
   
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
@@ -104,9 +104,9 @@ namespace nt2 { namespace ext
   
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
                               , (A0)(A1)(A2)
-                              , (ast_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
-                              (ast_< floating_<A2> >)  
+                              , (ast_< A0 >)
+                              (ast_< A1 >)
+                              (ast_< A2 >)  
                               )
   {
     typedef details::unifinv_1<A0, A1, A2> inner; 
@@ -114,47 +114,47 @@ namespace nt2 { namespace ext
     NT2_FUNCTOR_CALL(3) { return inner::doit(a0, a1, a2); }
   };
   
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
-                              , (A0)(A1)(A2)
-                              , (ast_< floating_<A0> >)
-                              (generic_< floating_<A1> >)
-                              (generic_< floating_<A2> >)  
-                              )
-  {
-    typedef details::unifinv_2<A0, A1, A2> inner; 
-    typedef typename inner::result_type result_type; 
-    NT2_FUNCTOR_CALL(3){ return inner::doit(a0, a1, a2);  }
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
+//                               , (A0)(A1)(A2)
+//                               , (ast_< A0 >)
+//                               (generic_< floating_<A1> >)
+//                               (generic_< floating_<A2> >)  
+//                               )
+//   {
+//     typedef details::unifinv_2<A0, A1, A2> inner; 
+//     typedef typename inner::result_type result_type; 
+//     NT2_FUNCTOR_CALL(3){ return inner::doit(a0, a1, a2);  }
     
-  };
+//   };
+  
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
+//                               , (A0)(A1)(A2)
+//                               , (generic_< floating_<A0> >)
+//                               (ast_< A1 >)
+//                               (generic_< floating_<A2> >)  
+//                               )
+//   {
+//     typedef details::unifinv_2<A0, A1, A2> inner; 
+//     typedef typename inner::result_type result_type; 
+//     NT2_FUNCTOR_CALL(3){ return inner::doit(a0, a1, a2);  }
+//   };
+  
+//   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
+//                               , (A0)(A1)(A2)
+//                               , (generic_< floating_<A0> >)
+//                               (generic_< floating_<A1> >)
+//                               (ast_< A2 >)  
+//                               )
+//   {
+//     typedef details::unifinv_2<A0, A1, A2> inner; 
+//     typedef typename inner::result_type result_type; 
+//     NT2_FUNCTOR_CALL(3){ return inner::doit(a0, a1, a2);  }
+//   };
   
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
                               , (A0)(A1)(A2)
-                              , (generic_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
-                              (generic_< floating_<A2> >)  
-                              )
-  {
-    typedef details::unifinv_2<A0, A1, A2> inner; 
-    typedef typename inner::result_type result_type; 
-    NT2_FUNCTOR_CALL(3){ return inner::doit(a0, a1, a2);  }
-  };
-  
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
-                              , (A0)(A1)(A2)
-                              , (generic_< floating_<A0> >)
-                              (generic_< floating_<A1> >)
-                              (ast_< floating_<A2> >)  
-                              )
-  {
-    typedef details::unifinv_2<A0, A1, A2> inner; 
-    typedef typename inner::result_type result_type; 
-    NT2_FUNCTOR_CALL(3){ return inner::doit(a0, a1, a2);  }
-  };
-  
-  NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
-                              , (A0)(A1)(A2)
-                              , (ast_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
+                              , (ast_< A0 >)
+                              (ast_< A1 >)
                               (generic_< floating_<A2> >)  
                               )
   {
@@ -165,9 +165,9 @@ namespace nt2 { namespace ext
   
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
                               , (A0)(A1)(A2)
-                              , (ast_< floating_<A0> >)
+                              , (ast_< A0 >)
                               (generic_< floating_<A1> >)
-                              (ast_< floating_<A2> >)  
+                              (ast_< A2 >)  
                               )
   {
     typedef details::unifinv_1<A0, A1, A2> inner; 
@@ -177,8 +177,8 @@ namespace nt2 { namespace ext
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::unifinv_, tag::cpu_
                               , (A0)(A1)(A2)
                               , (generic_< floating_<A0> >)
-                              (ast_< floating_<A1> >)
-                              (ast_< floating_<A2> >)  
+                              (ast_< A1 >)
+                              (ast_< A2 >)  
                               )
   {
     typedef details::unifinv_1<A0, A1, A2> inner; 

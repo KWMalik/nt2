@@ -67,7 +67,7 @@ NT2_TEST_CASE_TPL ( expcdf_2,  (float))//NT2_REAL_TYPES)
    NT2_DISPLAY(a); 
    nt2::table<T> z = expcdf(a, a+T(10)); 
 
-   
+   a = _(T(-5), T(1), T(5));
    nt2::table<T> b = _(T(1), T(1), T(11));
    NT2_DISPLAY(b); 
 
