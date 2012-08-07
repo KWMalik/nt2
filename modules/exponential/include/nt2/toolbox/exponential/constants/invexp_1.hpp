@@ -6,8 +6,8 @@
 //                 See accompanying file LICENSE.txt or copy at
 //                     http://www.boost.org/LICENSE_1_0.txt
 //==============================================================================
-#ifndef NT2_TOOLBOX_EXPONENTIAL_CONSTANTS_EXP_1_HPP_INCLUDED
-#define NT2_TOOLBOX_EXPONENTIAL_CONSTANTS_EXP_1_HPP_INCLUDED
+#ifndef NT2_TOOLBOX_EXPONENTIAL_CONSTANTS_INVEXP_1_HPP_INCLUDED
+#define NT2_TOOLBOX_EXPONENTIAL_CONSTANTS_INVEXP_1_HPP_INCLUDED
 /*!
  * \file
 **/
@@ -16,16 +16,16 @@
 
 /*!
  * \ingroup expon_constant
- * \defgroup expon_constant_exp_1 Exp_1
+ * \defgroup expon_constant_invexp_1 invexp_1 (0.36787944117144232159552377016146...)
  *
  * \par Description
- * Constant exp_1 : \f$e = \exp(1)\f$ constant.
+ * Constant invexp_1 : \f$e = \exp(-1)\f$ constant.
  * \par
  *
  * \par Header file
  *
  * \code
- * #include <nt2/include/functions/exp_1.hpp>
+ * #include <nt2/include/functions/invexp_1.hpp>
  * \endcode
  *
  *
@@ -35,13 +35,13 @@
  * namespace boost::simd
  * {
  *   template <class T,class A0>
- *     meta::call<tag::exp_1_(A0)>::type
- *     exp_1();
+ *     meta::call<tag::invexp_1_(A0)>::type
+ *     invexp_1();
  * }
  * \endcode
  *
  *
- * \param T template parameter of Exp_1
+ * \param T template parameter of invexp_1
  *
  * \return type T value
  *
@@ -52,13 +52,13 @@ namespace nt2
 {
   namespace tag
   {
-    BOOST_SIMD_CONSTANT_REGISTER( Exp_1, double
-                                , 2, 0x402df854
-                                , 0x4005bf0a8b145769LL
+    BOOST_SIMD_CONSTANT_REGISTER( Invexp_1, double
+                                , 2, 0x3ebc5ab2
+                                , 0x3fd78b56362cef38ll
                                 );
   }
 
-  BOOST_SIMD_CONSTANT_IMPLEMENTATION(tag::Exp_1, Exp_1);
+  BOOST_SIMD_CONSTANT_IMPLEMENTATION(tag::Invexp_1, Invexp_1);
 }
 
 #endif
