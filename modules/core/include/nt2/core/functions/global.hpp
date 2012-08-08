@@ -66,13 +66,18 @@ namespace nt2
 
   //============================================================================
   /*!
-   * sum of absolute squares of a table
-   *
-   * \param xpr  table
+   *global reduction of an expression to a scalar
    */
   //============================================================================
   NT2_FUNCTION_IMPLEMENTATION(nt2::tag::global_       , global, 2)
 
+  template <class A0,  class A1>
+  BOOST_FORCEINLINE  typename meta::call<tag::global_(nt2::functor<A0>,const A1&)>::type
+  global(const A1 & a1)
+  {
+    return nt2::global(nt2::functor<A0>(), a1); 
+  }
+  
 }
 
 
