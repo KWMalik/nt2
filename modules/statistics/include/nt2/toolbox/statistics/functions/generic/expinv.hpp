@@ -31,7 +31,7 @@ namespace nt2 { namespace ext
     NT2_FUNCTOR_CALL(1)
       {
         std::cout << 1 << std::endl; 
-        return  -nt2::log(oneminus(if_allbits_else(is_ltz(a0), a0)));
+        return  -(nt2::log(nt2::oneminus(nt2::if_allbits_else(nt2::is_ltz(a0), a0))));
       }
   };
   
@@ -46,7 +46,7 @@ namespace nt2 { namespace ext
       {
         std::cout << 2 << std::endl; 
         BOOST_ASSERT_MSG(nt2::is_gtz(a1), "mu parameter must be positive"); 
-        return  -a1*nt2::log(nt2::oneminus(nt2::if_allbits_else(nt2::is_ltz(a0), a0)));
+        return  -a1*nt2::expinv(a0);
       }
   };
 
@@ -79,17 +79,13 @@ namespace nt2 { namespace ext
                               (generic_< floating_<A1> >)
                               )
   {
-    typedef typename meta::call<tag::is_ltz_(const A0 &)>::type                                 T00; 
-    typedef typename meta::call<tag::if_allbits_else_(T00, const A0&)>::type                     T0; 
-    typedef typename meta::call<tag::oneminus_(T0)>::type                                        T1;
-    typedef typename meta::call<tag::log_(T1)>::type                                             T2;
-    typedef typename meta::call<tag::multiplies_(const A1&,T2)>::type                            T3;
-    typedef typename meta::call<tag::uminus_(T3)>::type                                 result_type;
+    typedef typename meta::call<tag::expinv_(const A0&) >::type                  T1; 
+    typedef typename meta::call<tag::multiplies_(A1, T1)>::type          result_type;   
     NT2_FUNCTOR_CALL(2)
       {
         std::cout << 4 << std::endl; 
         BOOST_ASSERT_MSG(nt2::is_gtz(a1), "mu parameter(s) must be positive"); 
-        return  -(a1*nt2::log(oneminus(if_allbits_else(is_ltz(a0), a0))));
+        return  (-a1)*nt2::expinv(a0);
       }
   };
   
@@ -99,17 +95,12 @@ namespace nt2 { namespace ext
                               (ast_< A1 >)
                               )
   {
-    typedef typename meta::call<tag::is_ltz_(const A0 &)>::type                                  T00; 
-    typedef typename meta::call<tag::if_allbits_else_(T00, const A0&)>::type                     T0; 
-    typedef typename meta::call<tag::oneminus_(T0)>::type                                        T1;
-    typedef typename meta::call<tag::log_(T1)>::type                                             T2;
-    typedef typename meta::call<tag::multiplies_(const A1&,T2)>::type                            T3;
-    typedef typename meta::call<tag::uminus_(T3)>::type                                 result_type;
+    typedef typename meta::call<tag::multiplies_(A0, const A1&)>::type   result_type;
     NT2_FUNCTOR_CALL(2)
       {
         std::cout << 5 << std::endl; 
         BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a1)), "mu parameter(s) must be positive"); 
-        return  -(a1*nt2::log(oneminus(if_allbits_else(is_ltz(a0), a0))));
+        return  (-nt2::expinv(a0))*a1;
       }
   };
 } }

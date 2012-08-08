@@ -14,11 +14,14 @@
 /// created  by jt the 22/02/2011
 /// 
 #include <nt2/include/functions/cauinv.hpp>
+#include <nt2/include/functions/caucdf.hpp>
 #include <nt2/include/functions/ulpdist.hpp>
 #include <nt2/include/constants/invpi.hpp>
 #include <nt2/include/functions/linspace.hpp>
 #include <nt2/include/functions/rif.hpp>
+#include <nt2/include/functions/isequal.hpp>
 #include <nt2/include/functions/reshape.hpp>
+#include <nt2/include/functions/ones.hpp>
 #include <nt2/sdk/unit/tests.hpp>
 #include <nt2/sdk/unit/module.hpp>
 #include <nt2/sdk/memory/buffer.hpp>
@@ -67,6 +70,21 @@ NT2_TEST_CASE_TPL ( cauinv_2,  NT2_REAL_TYPES)
   NT2_DISPLAY(cauinv(a, nt2::One<T>(), nt2::Two<T>()));
   NT2_DISPLAY(cauinv(a, a, nt2::Two<T>()));
   NT2_DISPLAY(cauinv(a, a, a));
+
+ } // end of test for floating_ 
+ 
+NT2_TEST_CASE_TPL ( cauinv_inv,  NT2_REAL_TYPES)
+{
+  
+  using nt2::cauinv;
+  using nt2::tag::cauinv_;
+  using nt2::_; 
+  
+  nt2::table<T> x = nt2::linspace(T(-10), T(10));
+  nt2::table<T> s = nt2::linspace(T(1), T(10));
+  nt2::table<T> z = nt2::cauinv(nt2::caucdf(x, nt2::Zero<T>())); 
+  NT2_DISPLAY(z);
+  NT2_TEST(nt2::isequal(z, nt2::ones(size(z), nt2::meta::as_<T>())));                   
 
  } // end of test for floating_ 
  

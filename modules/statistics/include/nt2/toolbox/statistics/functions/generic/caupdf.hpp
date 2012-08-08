@@ -50,7 +50,7 @@ namespace nt2 { namespace ext
     NT2_FUNCTOR_CALL(3)
       {
         BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
-        return nt2::sqrt(a2)*caupdf(a2*a0, a1);
+        return a2*caupdf(a0/a2, a1);
       }
   };
 
@@ -76,9 +76,9 @@ namespace nt2 { namespace ext
 
   NT2_FUNCTOR_IMPLEMENTATION( nt2::tag::caupdf_, tag::cpu_
                             , (A0)(A1)(A2)
-                              , (unspecified_< A0 >)
+                              , (generic_< floating_< A0 > > )
                                (ast_< A1 >)
-                               (unspecified_< A2 >)  
+                               (generic_< floating_< A2 > >)  
                             )
   {
     typedef typename meta::call<tag::bsxfun_(nt2::functor<tag::multiplies_>,const A0&,const A2&)>::type T0; 
@@ -90,7 +90,7 @@ namespace nt2 { namespace ext
       BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
       return nt2::bsxfun(nt2::functor<tag::multiplies_>(),
                          nt2::sqrt(a2),
-                         caupdf(nt2::bsxfun(nt2::functor<tag::multiplies_>(), a0, a2), a1)
+                         caupdf(nt2::bsxfun(nt2::functor<tag::divides_>(), a0-a1, a2)
                          ); 
     }
   };

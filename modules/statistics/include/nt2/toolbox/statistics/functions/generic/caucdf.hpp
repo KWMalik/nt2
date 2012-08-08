@@ -89,7 +89,7 @@ namespace nt2 { namespace ext
     
     NT2_FUNCTOR_CALL(3)
       {   
-        BOOST_ASSERT_MSG(nt2::globalall(nt2::is_gtz(a2)), "scale parameter must be positive"); 
+        BOOST_ASSERT_MSG(nt2::is_gtz(a2), "scale parameter must be positive"); 
         return Half<sA0>()+nt2::atanpi(nt2::sqrt(a2)*(nt2::bsxfun(nt2::functor<tag::minus_>(), a0, a1))); 
       }
   };
