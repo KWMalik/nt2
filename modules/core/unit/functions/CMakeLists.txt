@@ -8,7 +8,12 @@
 ##############################################################################
 
 SET( SOURCES
+  ratio.cpp
+  linear_interp.cpp
     sx.cpp
+  sx_plus.cpp
+  sx_multiplies.cpp
+  sx_fma.cpp
     tsxfun.cpp
     global.cpp
     globalall.cpp 

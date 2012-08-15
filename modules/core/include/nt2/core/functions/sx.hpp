@@ -52,13 +52,6 @@ namespace nt2
     };
   }
 
-  //============================================================================
-  /*!
-   * sum of absolute squares of a table
-   *
-   * \param xpr  table
-   */
-  //============================================================================
   NT2_FUNCTION_IMPLEMENTATION(nt2::tag::sx_       , sx, 2)
   NT2_FUNCTION_IMPLEMENTATION(nt2::tag::sx_       , sx, 3)
 
@@ -71,7 +64,7 @@ namespace nt2
   }
   
   template <class A0,  class A1,  class A2,  class A3>
-  BOOST_FORCEINLINE  typename meta::call<tag::bsxfun_(nt2::functor<A0>,const A1&,const A2&)>::type
+  BOOST_FORCEINLINE  typename meta::call<tag::tsxfun_(nt2::functor<A0>,const A1&,const A2&)>::type
   sx(const A1 &a1, const A2 &a2, const A3 & a3)
   {
     return nt2::sx(A0(), a1, a2, a3); 
