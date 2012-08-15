@@ -16,11 +16,6 @@
 #include <boost/simd/sdk/functor/preprocessor/call.hpp>
 #include <boost/dispatch/dsl/unpack.hpp>
 #include <boost/dispatch/meta/terminal_of_shared.hpp>
-#include <boost/dispatch/meta/strip.hpp>
-
-#include <boost/proto/make_expr.hpp>
-#include <boost/type_traits/remove_reference.hpp>
-#include <boost/ref.hpp>
 
 namespace boost { namespace simd { namespace meta
 {
@@ -50,13 +45,41 @@ namespace boost { namespace simd { namespace meta
 
 namespace boost { namespace simd { namespace ext
 {
+  template<class Tag, class State>
+  struct with_state
+  {
+    BOOST_FORCEINLINE
+    with_state(State& state_)
+     : state(state_)
+    {
+    }
+
+    template<class Sig>
+    struct result;
+
+    template<class This, class Expr>
+    struct result<This(Expr)>
+     : dispatch::meta::call<Tag(Expr, State&)>
+    {
+    };
+
+    template<class Expr>
+    BOOST_FORCEINLINE typename result<with_state(Expr&)>::type
+    operator()(Expr& expr) const
+    {
+      return typename dispatch::functor<Tag>()(expr, state);
+    }
+
+    State& state;
+  };
+
   template<class Expr, class State>
   struct unpack_schedule
   {
     typedef dispatch::
             unpack< Expr
                   , dispatch::functor< typename proto::tag_of<Expr>::type, tag::formal_ >
-                  , dispatch::with_state<tag::schedule_, State> const
+                  , with_state<tag::schedule_, State> const
                   >
     transform;
 
@@ -65,7 +88,7 @@ namespace boost { namespace simd { namespace ext
     BOOST_FORCEINLINE result_type
     operator()(Expr& expr, State& state) const
     {
-      return transform()(expr, dispatch::with_state<tag::schedule_, State>(state));
+      return transform()(expr, with_state<tag::schedule_, State>(state));
     }
   };
 
@@ -155,20 +178,16 @@ namespace boost { namespace simd { namespace ext
   {
     typedef typename dispatch::meta::semantic_of<A0&>::type             semantic;
     typedef typename dispatch::meta::terminal_of_shared<semantic>::type terminal;
-    typedef typename unpack_schedule<A0, F const>::result_type          unpck;
-    typedef typename dispatch::meta::as_ref<unpck>::type                child1;
     typedef meta::as_expr<terminal, typename A0::proto_domain>          terminal_expr;
     typedef typename terminal_expr::type                                result_type;
 
     BOOST_FORCEINLINE result_type
     operator()(A0& a0, F const& f) const
     {
-      typedef boost::reference_wrapper<typename boost::remove_reference<child1>::type> ref;
-
       terminal term = dispatch::meta::terminal_of_shared<semantic>::make();
-      f(boost::proto::make_expr<boost::proto::tag::assign>( boost::ref(boost::proto::as_child(term))
-                                                          , ref(unpack_schedule<A0, F const>()(a0, f))
-                                                          )
+      f(boost::simd::assign( boost::proto::as_child(term)
+                           , unpack_schedule<A0, F const>()(a0, f)
+                           )
        );
       return terminal_expr::call(term);
     }
