@@ -16,10 +16,7 @@
  * \defgroup core linear_interp
  *
  * \par Description
- * Returns the sum of absolute values of the elements matrix along the selected direction,
- * i.e. the 1-norm linear_interp(a0, n))
- * by default n is the first non-singleton dimension of a0
- *
+ * Returns sx-expansion of (1-dx)*a+dx*b
  * \par Header file
  *
  * \code

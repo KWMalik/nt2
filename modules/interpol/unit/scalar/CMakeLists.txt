@@ -9,6 +9,7 @@
 
 SET( SOURCES  
   bsearch.cpp
+  idx_linear.cpp
   linear.cpp
   nearest.cpp
   interp1.cpp

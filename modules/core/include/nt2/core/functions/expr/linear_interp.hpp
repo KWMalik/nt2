@@ -41,12 +41,12 @@ namespace nt2 { namespace ext
                               )
   {
     typedef typename meta::call<tag::oneminus_(const A0&)>::type                       T0;
-    typedef typename meta::call<tag::sx_multiplies_(T0,const A2&)>::type               T1;
-    typedef typename meta::call<tag::sx_fma_(const A0&,const A1&, T1)>::type  result_type;
+    typedef typename meta::call<tag::sx_multiplies_(T0,const A1&)>::type               T1;
+    typedef typename meta::call<tag::sx_fma_(const A0&,const A2&, T1)>::type  result_type;
     
     BOOST_FORCEINLINE result_type operator()(A0 const& dx, A1 const& a, A2 const& b) const
     {
-      return sx_fma(dx, a, sx_multiplies(oneminus(dx), b));
+      return sx_fma(dx, b, sx_multiplies(oneminus(dx), a));
     }
   };
 
@@ -58,13 +58,13 @@ namespace nt2 { namespace ext
                               )
   { 
     typedef typename meta::call<tag::oneminus_(const A0&)>::type                        T0;
-    typedef typename meta::call<tag::multiplies_(T0,const A2&)>::type                   T1;
-    typedef typename meta::call<tag::multiplies_(const A0&,const A1&)>::type            T2;
+    typedef typename meta::call<tag::multiplies_(T0,const A1&)>::type                   T1;
+    typedef typename meta::call<tag::multiplies_(const A0&,const A2&)>::type            T2;
     typedef typename meta::call<tag::sx_plus_(T2,T1)>::type                    result_type;
     
     BOOST_FORCEINLINE result_type operator()(A0 const& dx, A1 const& a, A2 const& b) const
     {
-      return sx_plus(dx*a, oneminus(dx)*b);
+      return sx_plus(dx*b, oneminus(dx)*a);
     }
   };
  

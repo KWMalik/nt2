@@ -40,7 +40,7 @@ NT2_TEST_CASE_TPL( linear_interp, (float)(double))//NT2_TYPES )
   NT2_TEST(nt2::isequal(nt2::linear_interp(nt2::Half<T>(), a, b), a+nt2::Half<T>()));
   nt2::table<T> z = nt2::linear_interp(dx, a, b);
   NT2_DISPLAY(z); 
-  NT2_TEST(nt2::isequal(nt2::linear_interp(dx, a, b), a+oneminus(dx)));
+  NT2_TEST(nt2::isequal(nt2::linear_interp(dx, a, b), a+dx));
   NT2_DISPLAY(nt2::linear_interp(dx, a, b));
   NT2_DISPLAY(nt2::linear_interp(dx, a, b)-z); 
 }
