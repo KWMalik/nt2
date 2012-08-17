@@ -31,32 +31,7 @@
 #include <nt2/include/functions/along.hpp>
 #include <nt2/include/constants/nan.hpp>
 #include <nt2/sdk/simd/logical.hpp>
-namespace nt2 {
-  template<class T, class N> inline
-  typename nt2::meta::as_integer<N, signed>::type  fi(const T& x,  const N& i)
-  {
-    switch (i)
-      {
-      case 2 : return nt2::first_index<2>(x);
-      case 3 : return nt2::first_index<3>(x);
-      case 4 : return nt2::first_index<4>(x);  
-      default : return nt2::first_index<1>(x); 
-      }
-  }
-  template<class T, class N> inline
-  typename nt2::meta::as_integer<N, signed>::type li(const T& x,  const N& i)
-  {
-    
-    switch (i)
-      {
-      case 2 : return nt2::last_index<2>(x);
-      case 3 : return nt2::last_index<3>(x);
-      case 4 : return nt2::last_index<4>(x);  
-      default : return nt2::last_index<1>(x); 
-      }
-  }
-  
-}
+
 namespace nt2 { namespace ext
 {
   
@@ -79,77 +54,98 @@ namespace nt2 { namespace ext
       //      BOOST_ASSERT_MSG(are_sx_compatible(xi, y), "Inputs dimensions are not compatible"); 
       const idx_t & xi   =  boost::proto::child_c<1>(inputs);
       const value_t & y     =  boost::proto::child_c<0>(inputs);
-      std::cout << 1 << std::endl;
+      yi.resize(inputs.extent()); 
       bool extrap = false;
-      std::cout << 2 << std::endl;
       std::size_t dim =nt2::firstnonsingleton(xi); 
-      value_type extrapval = Nan<value_type>();
-      choices(inputs, extrap, extrapval, dim, N1());
-      std::cout << 3 << std::endl;
-      nt2::of_size_max sizee;
+      value_type extrapval1 = Nan<value_type>();
+      value_type extrapval2 = extrapval1; 
+      choices(inputs, extrap, extrapval1, extrapval2, dim, N1());
+      nt2::of_size_max sizee; 
       for(std::size_t i=0; i < sizee.size(); ++i) {sizee[i] = 1;  }
-      std::cout << 4 << std::endl;
-      std::cout << dim  << std::endl; 
-      std::cout << sizee<< std::endl; 
       sizee[dim-1] = numel(xi);
-      const value_type f = value_type(nt2::fi(y, dim));
-      const value_type l = value_type(nt2::minusone(nt2::li(y, dim)));
-      table<value_type>   index = nt2::min(nt2::max(f, nt2::floor(nt2::reshape(xi, sizee))), l);
-      table<index_type>   i_index = nt2::toint(index);    
-      table<value_type>  dx    =  sx<nt2::tag::minus_>(nt2::reshape(xi, sizee), index);
-  
+      const value_type f = value_type(nt2::first_index(y, dim));
+      const value_type l = value_type(nt2::minusone(nt2::last_index(y, dim)));
+      table<value_type> index = nt2::min(nt2::max(f, nt2::floor(nt2::reshape(xi, sizee))), l);
+      table<index_type> i_index = nt2::toint(index);    
+      table<value_type> dx    =  sx<nt2::tag::minus_>(nt2::reshape(xi, sizee), index);
       yi =  linear_interp(dx, along(y, i_index, dim), along(y, oneplus(i_index), dim));
-      NT2_DISPLAY(yi);           
-//       if (!extrap) {
-//         typedef typename nt2::meta::as_logical<value_type>::type         b_type;       
-//         table<b_type> test = nt2::logical_or(boost::simd::is_nge(xi, value_type(first_index<2>(y))),
-//                                              boost::simd::is_nle(xi, value_type(last_index<2>(y))));
-//         NT2_DISPLAY(test); 
-//         table<value_type> yy = yi;
-//         table<value_type> yyy = nt2::tsxfun(nt2::functor<nt2::tag::if_else_>(), test,extrapval, yy);
-//         NT2_DISPLAY(yy); 
-//         std::cout << "icitte" << std::endl; 
-//       }
+      if (!extrap) {
+        yi = nt2::tsxfun(nt2::functor<nt2::tag::if_else_>(), nt2::reshape(boost::simd::is_nge(xi, value_type(f)), sizee),extrapval1, yi);
+        yi = nt2::tsxfun(nt2::functor<nt2::tag::if_else_>(), nt2::reshape(boost::simd::is_nle(xi, value_type(l)), sizee),extrapval2, yi); 
+      } 
       return yi;
     } 
   private :
-    static void choices(const A1&, bool &,  value_type&,
-                        std::size_t&, boost::mpl::long_<2> const &)
+    // Two inputs y and xi
+    static void choices(const A1&, bool &,  value_type&, value_type& ,
+                        std::size_t&, boost::mpl::long_<2> const &)  //nothing to get  
       { }
+    // Three inputs y and xi and a bool or a floating or a _ (meaning nothing here)
     static void choices(const A1& inputs,
-                        bool & extrap, value_type& extrapval,
+                        bool & extrap, value_type& extrapval1, value_type& extrapval2,
                         std::size_t& dim, boost::mpl::long_<3> const &)
       {
         typedef typename boost::proto::result_of::child_c<A1&,2>::type             child2;
         typedef typename meta::scalar_of<child2>::type                    cref_param_type;
         typedef typename meta::strip<cref_param_type>::type                    param_type;
-        std::cout << type_id<nt2::meta::as_<param_type> >() << std::endl; 
-        get(inputs, extrap, extrapval, nt2::meta::as_<param_type>());         
+        get(inputs, extrap, extrapval1, extrapval2, nt2::meta::as_<param_type>());         
       }
     static void get(const A1& inputs, bool & extrap,
-                    value_type&,  const nt2::meta::as_<bool> &)
+                    value_type&, value_type&, const nt2::meta::as_<bool> &) //get the bool
       {
         extrap =  boost::proto::child_c<2>(inputs);
       }
-    static void get(const A1& inputs, bool &,  value_type& extrapval,
-                    const nt2::meta::as_<value_type> &)
+    static void get(const A1& inputs, bool &,  value_type& extrapval1, value_type& extrapval2,
+                    const nt2::meta::as_<value_type> &)                     //get extrapval1,  compute extrapval2
       {
-        extrapval =  boost::proto::child_c<2>(inputs);
+        extrapval1 =  extrapval2 = boost::proto::child_c<2>(inputs);
       }
-    static void get(const A1& inputs, bool &,  value_type& extrapval,
-                    const nt2::meta::as_<nt2::container::colon_> &)
+    static void get(const A1& inputs, bool &, value_type&, value_type&,
+                    const nt2::meta::as_<nt2::container::colon_> &)        //nothing to get  
       {
       }
-
+    // Four inputs y and xi and two floating or a _ and an integer
     static void choices(const A1& inputs,
-                        bool & extrap, value_type& extrapval,
+                        bool &, value_type& extrapval1, value_type& extrapval2,
                         std::size_t& dim, boost::mpl::long_<4> const &)
       {
-        dim =  boost::proto::child_c<3>(inputs);
         typedef typename boost::proto::result_of::child_c<A1&,2>::type             child2;
         typedef typename meta::scalar_of<child2>::type                    cref_param_type;
         typedef typename meta::strip<cref_param_type>::type                    param_type;
-        get(inputs, extrap, extrapval,nt2::meta::as_<param_type>());         
+        get(inputs, extrapval1, extrapval2, dim,nt2::meta::as_<param_type>());         
+      }
+    static void get(const A1& inputs, value_type& extrapval1, value_type& extrapval2, std::size_t&, 
+                    const nt2::meta::as_<value_type> &)          //get extrapval1 and extrapval2
+      {
+        extrapval1 = boost::proto::child_c<2>(inputs);
+        extrapval2 = boost::proto::child_c<3>(inputs);
+      }
+    static void get(const A1& inputs, value_type&, value_type&, std::size_t& dim,  
+                    const nt2::meta::as_<nt2::container::colon_> &)   //get dimension
+      {
+        dim =  boost::proto::child_c<3>(inputs);
+      }
+    // Five inputs y and xi, two floating  an integer
+    static void choices(const A1& inputs,
+                        bool & extrap, value_type& extrapval1, value_type& extrapval2,
+                        std::size_t& dim, boost::mpl::long_<5> const &) //get extrapval1 and extrapval2 and dimension
+      {
+        dim =  boost::proto::child_c<4>(inputs);
+        typedef typename boost::proto::result_of::child_c<A1&,2>::type             child2;
+        typedef typename meta::scalar_of<child2>::type                    cref_param_type;
+        typedef typename meta::strip<cref_param_type>::type                    param_type;
+        get(inputs, extrap, extrapval1, extrapval2, dim, nt2::meta::as_<param_type>());         
+      }
+    static void get(const A1& inputs, bool& extrap, value_type& , value_type&, std::size_t&, 
+                    const nt2::meta::as_<bool> &)          //get bool
+      {
+        extrap = boost::proto::child_c<2>(inputs);
+      }
+    static void get(const A1& inputs, bool&, value_type& extrapval1, value_type& extrapval2 , std::size_t&, 
+                    const nt2::meta::as_<value_type> &)          //get two floating
+      {
+        extrapval1 = boost::proto::child_c<2>(inputs);
+        extrapval2 = boost::proto::child_c<3>(inputs);
       }
     
   }; 

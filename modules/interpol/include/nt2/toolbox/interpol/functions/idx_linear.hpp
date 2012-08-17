@@ -22,7 +22,14 @@
  * one dimensional idx_linear interpolation
  * given an array a and a vector idx of "real" indices
  * provides the interpolated values along the a rows
- * by linear formula
+ * by linear formula.
+ * calls can be idx_linear(x, y)
+ *              idx_linear(x, y, true) allowing extrapolation
+ *              idx_linear(x, y, val1) putting val1 outside the bounds
+ *              idx_linear(x, y, val1, val2)}, putting val1 under the index bounds val2 ovr
+ *              idx_linear(x, y, _, dim) dim is the dimension of interpolation firstnonsingletopn of xi by default
+ *              idx_linear(x, y, val1, dim)
+ *              idx_linear(x, y, val1, val2, dim) can also be used
  * \par
  *
  * \par Header file
@@ -55,7 +62,8 @@ namespace nt2 { namespace tag
   }
   NT2_FUNCTION_IMPLEMENTATION(tag::idx_linear_, idx_linear, 2)  
   NT2_FUNCTION_IMPLEMENTATION(tag::idx_linear_, idx_linear, 3)  
-  NT2_FUNCTION_IMPLEMENTATION(tag::idx_linear_, idx_linear, 4)  
+  NT2_FUNCTION_IMPLEMENTATION(tag::idx_linear_, idx_linear, 4)
+  NT2_FUNCTION_IMPLEMENTATION(tag::idx_linear_, idx_linear, 5)
 }
 
 namespace nt2 { namespace container { namespace ext
