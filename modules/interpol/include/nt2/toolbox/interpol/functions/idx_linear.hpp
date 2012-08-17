@@ -55,6 +55,7 @@ namespace nt2 { namespace tag
   }
   NT2_FUNCTION_IMPLEMENTATION(tag::idx_linear_, idx_linear, 2)  
   NT2_FUNCTION_IMPLEMENTATION(tag::idx_linear_, idx_linear, 3)  
+  NT2_FUNCTION_IMPLEMENTATION(tag::idx_linear_, idx_linear, 4)  
 }
 
 namespace nt2 { namespace container { namespace ext

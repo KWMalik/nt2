@@ -14,6 +14,7 @@ SET( SOURCES
   sx_plus.cpp
   sx_multiplies.cpp
   sx_fma.cpp
+  sx_if_else.cpp
     tsxfun.cpp
     global.cpp
     globalall.cpp 

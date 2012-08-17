@@ -20,6 +20,9 @@
 #include <nt2/include/functions/reshape.hpp>
 #include <nt2/include/functions/fma.hpp>
 #include <nt2/include/functions/isequal.hpp>
+#include <nt2/include/functions/is_less_equal.hpp>
+#include <nt2/include/functions/if_else.hpp>
+#include <nt2/include/constants/one.hpp>
 
 #include <nt2/sdk/unit/module.hpp>
 #include <nt2/sdk/unit/tests/basic.hpp>
@@ -60,7 +63,48 @@ NT2_TEST_CASE_TPL( tsxfun_4, NT2_TYPES)
   NT2_DISPLAY(b);
   NT2_DISPLAY(c);
   nt2::functor<nt2::tag::fma_> f;
-  nt2::table<T> d = nt2::tsxfun(f,  a, b, c);
+  nt2::table<T> d = nt2::tsxfun(f, a, b, c);
   NT2_DISPLAY(d);
+  nt2::table<T> e = nt2::tsxfun(f, a, b, nt2::One<T>());
+  NT2_DISPLAY(e);
+  nt2::table<T> g = nt2::tsxfun(f, a, nt2::One<T>(), b);
+  NT2_DISPLAY(g);
+
+}
+NT2_TEST_CASE_TPL( tsxfun_5, NT2_REAL_TYPES)
+{
+  nt2::table<T> a = nt2::reshape(nt2::_(T(1), T(6)),2, 1, 3);
+  nt2::table<T> h = nt2::reshape(nt2::_(T(6), T(-1), T(1)),2, 1, 3);
+  nt2::table<T> b = nt2::reshape(nt2::_(T(7), T(12)),1, 2, 1, 3);
+  nt2::table<T> c = nt2::reshape(nt2::_(T(7), T(12)),2, 1, 1, 3);
+  NT2_DISPLAY(a);
+  NT2_DISPLAY(b);
+  NT2_DISPLAY(c);
+  nt2::functor<nt2::tag::if_else_> f;
+  nt2::table<T> d = nt2::tsxfun(f, nt2::le(a, h), b, c);
+  NT2_DISPLAY(d);
+  nt2::table<T> e = nt2::tsxfun(f, nt2::le(a, h), b, nt2::One<T>());
+  NT2_DISPLAY(e);
+  nt2::table<T> g = nt2::tsxfun(f, nt2::le(a, h), nt2::One<T>(), b);
+  NT2_DISPLAY(g);
+
+}
+NT2_TEST_CASE_TPL( tsxfun_6, NT2_REAL_TYPES)
+{
+   T extrapval = Nan<value_type>();
+  nt2::table<T> a = nt2::reshape(nt2::_(T(1), T(6)),2, 1, 3);
+  nt2::table<T> h = nt2::reshape(nt2::_(T(6), T(-1), T(1)),2, 1, 3);
+  nt2::table<T> b = nt2::reshape(nt2::_(T(7), T(12)),1, 2, 1, 3);
+  nt2::table<T> c = nt2::reshape(nt2::_(T(7), T(12)),2, 1, 1, 3);
+  NT2_DISPLAY(a);
+  NT2_DISPLAY(b);
+  NT2_DISPLAY(c);
+  nt2::functor<nt2::tag::if_else_> f;
+  nt2::table<T> d = nt2::tsxfun(f, nt2::le(a, h), b, c);
+  NT2_DISPLAY(d);
+  nt2::table<T> e = nt2::tsxfun(f, nt2::le(a, h), b, nt2::One<T>());
+  NT2_DISPLAY(e);
+  nt2::table<T> g = nt2::tsxfun(f, nt2::le(a, h), nt2::One<T>(), b);
+  NT2_DISPLAY(g);
 
 }

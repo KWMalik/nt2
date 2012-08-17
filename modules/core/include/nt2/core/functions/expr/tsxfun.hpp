@@ -67,7 +67,8 @@ namespace nt2 { namespace ext
       ext_t sizee ;
       for(size_t i = 0; i < sizee.size(); ++i)
         {
-          sizee[i] = nt2::max(nt2::max(s1[i], s2[i]), s3[i]); 
+          sizee[i] = nt2::max(nt2::max(s1[i], s2[i]), s3[i]);
+          //          std::cout << i << " -> " << s1[i] <<  " -> " << s2[i] <<  " ->" << s3[i] << std::endl; 
           BOOST_ASSERT_MSG(((s1[i] == sizee[i])||(s1[i] == 1))&&
                            ((s2[i] == sizee[i])||(s2[i] == 1))&&
                            ((s3[i] == sizee[i])||(s3[i] == 1)),
@@ -154,7 +155,7 @@ namespace nt2 { namespace ext
                             )
   {
     typedef typename A1::extent_type     ext1t_t;
-    typedef typename A3::extent_type     ext2t_t;
+    typedef typename A2::extent_type     ext2t_t;
     typedef typename meta::strip<ext1t_t>::type  ext1_t;
     typedef typename meta::strip<ext2t_t>::type  ext2_t;
     typedef typename make_size< (ext1_t::static_size > ext2_t::static_size)
