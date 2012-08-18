@@ -31,6 +31,7 @@
 #include <nt2/include/functions/along.hpp>
 #include <nt2/include/constants/nan.hpp>
 #include <nt2/sdk/simd/logical.hpp>
+#include <boost/fusion/include/make_vector.hpp>
 
 namespace nt2 { namespace ext
 {
@@ -48,6 +49,9 @@ namespace nt2 { namespace ext
     typedef typename meta::as_integer<value_type>::type               index_type;      
     typedef typename A0::value_type                                    sale_type; 
     typedef A0&                                                      result_type;
+    typedef boost::fusion::vector<value_type, value_type>                 f_type; 
+    typedef typename A0::extent_type                                       ext_t;
+
     
     result_type operator()(A0& yi, A1& inputs) const
     {
@@ -60,8 +64,7 @@ namespace nt2 { namespace ext
       value_type extrapval1 = Nan<value_type>();
       value_type extrapval2 = extrapval1; 
       choices(inputs, extrap, extrapval1, extrapval2, dim, N1());
-      nt2::of_size_max sizee; 
-      for(std::size_t i=0; i < sizee.size(); ++i) {sizee[i] = 1;  }
+      ext_t sizee; sizee[0] = 1; 
       sizee[dim-1] = numel(xi);
       const value_type f = value_type(nt2::first_index(y, dim));
       const value_type l = value_type(nt2::minusone(nt2::last_index(y, dim)));
@@ -100,6 +103,20 @@ namespace nt2 { namespace ext
       {
         extrapval1 =  extrapval2 = boost::proto::child_c<2>(inputs);
       }
+//     static void get(const A1& inputs, bool &,  value_type& extrapval1, value_type& extrapval2,
+//                     const nt2::meta::as_<f_type> &)                     //get extrapval1,  compute extrapval2
+//       {
+//         extrapval1 = boost::fusion::at_c<0>(boost::proto::child_c<2>(inputs));
+//         extrapval2 = boost::fusion::at_c<1>(boost::proto::child_c<2>(inputs));
+//       }
+//     static void get(const A1& inputs, bool &,  value_type& extrapval1, value_type& extrapval2,
+//                     const nt2::meta::as_<nt2::table<value_type> > &)                     //get extrapval1,  compute extrapval2
+//       {
+//         std::cout << "icitte" << std::endl;
+//         std::cout << boost::proto::child_c<2>(inputs) << std::endl;
+//         extrapval1 = boost::proto::child_c<2>(inputs)(begin_);
+//         extrapval2 = boost::proto::child_c<2>(inputs)(begin_+1);
+//       }
     static void get(const A1& inputs, bool &, value_type&, value_type&,
                     const nt2::meta::as_<nt2::container::colon_> &)        //nothing to get  
       {

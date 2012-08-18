@@ -23,31 +23,19 @@
  * given an array a and a vector idx of "real" indices
  * provides the interpolated values along the a rows
  * by linear formula.
- * calls can be idx_linear(x, y)
- *              idx_linear(x, y, true) allowing extrapolation
- *              idx_linear(x, y, val1) putting val1 outside the bounds
- *              idx_linear(x, y, val1, val2)}, putting val1 under the index bounds val2 ovr
- *              idx_linear(x, y, _, dim) dim is the dimension of interpolation firstnonsingletopn of xi by default
- *              idx_linear(x, y, val1, dim)
- *              idx_linear(x, y, val1, val2, dim) can also be used
+ * calls can be idx_linear(a, idx)
+ *              idx_linear(a, idx, true) allowing extrapolation
+ *              idx_linear(a, idx, val1) putting val1 outside the bounds
+ *              idx_linear(a, idx, val1, val2)}, putting val1 under the index bounds val2 ovr
+ *              idx_linear(a, idx, _, dim) dim is the dimension of interpolation firstnonsingletopn of xi by default
+ *              idx_linear(a, idx, val1, dim)
+ *              idx_linear(a, idx, val1, val2, dim) can also be used
  * \par
  *
  * \par Header file
  * 
  * \code
  * #include <nt2/include/functions/idx_linear.hpp>
- * \endcode
- * 
- * 
- * \synopsis
- *
- * \code
- * namespace nt2
- * {
- *   template <class A0>
- *     meta::call<tag::idx_linear_(A0)>::type
- *     idx_linear(const A0 & a, const A1 & xi);
- * }
  * \endcode
  *  
 **/

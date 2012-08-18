@@ -10,6 +10,7 @@
 SET( SOURCES  
   bsearch.cpp
   idx_linear.cpp
+  idxy_bilinear.cpp  
   linear.cpp
   nearest.cpp
   interp1.cpp

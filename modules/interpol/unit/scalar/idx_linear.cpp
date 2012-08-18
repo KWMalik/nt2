@@ -14,6 +14,7 @@
 #include <nt2/include/functions/trans.hpp>
 #include <nt2/sdk/unit/module.hpp>
 #include <nt2/sdk/unit/tests/relation.hpp>
+#include <boost/fusion/include/make_vector.hpp>
 
 // NT2_TEST_CASE_TPL( idx_linear_scalar, (float)(double))//NT2_TYPES )
 // {
@@ -85,7 +86,7 @@ NT2_TEST_CASE_TPL( idx_linear2, (float))//(double))//NT2_TYPES )
   NT2_DISPLAY(x);
   NT2_DISPLAY(xi); 
   nt2::table<T> yi; 
- //  yi =nt2::idx_linear(x, xi, _, 2lu); 
+  yi =nt2::idx_linear(x, xi, _, 2lu); 
   std::cout << "1 extrap " <<  false <<  " extrapval " << "-" <<  " dim " << "2" << std::endl; 
   NT2_DISPLAY(yi); 
   yi =nt2::idx_linear(x, nt2::trans(xi), _, 1lu); 
@@ -109,5 +110,20 @@ NT2_TEST_CASE_TPL( idx_linear2, (float))//(double))//NT2_TYPES )
  
   std::cout << "7 extrap " <<  "-" <<  " extrapval1 " << "33" <<  " extrapval2 " << "42" << std::endl; 
   yi =nt2::idx_linear(x, xi, T(33), T(42), 1); 
-  NT2_DISPLAY(yi); 
+  NT2_DISPLAY(yi);
+
+//   std::cout << "8 extrap " <<  "-" <<  " extrapval1 " << "33" <<  " extrapval2 " << "42" << std::endl;
+//   typedef boost::fusion::vector<T,T>  result_type;
+//   result_type a =  boost::fusion::make_vector(T(-3), T(25));
+//   std::cout << boost::fusion::at_c<0>(a) << std::endl; 
+//   std::cout << boost::fusion::at_c<1>(a) << std::endl; 
+//   yi =nt2::idx_linear(x, xi, a);
+//   NT2_DISPLAY(yi);
+
+//   std::cout << "9 extrap " <<  "-" <<  " extrapval1 " << "33" <<  " extrapval2 " << "42" << std::endl;
+//   nt2::table<T>   a(nt2::of_size(1, 2));
+//   a(1) = T(-3);  a(2) = T(25); 
+//   yi =nt2::idx_linear(x, xi, a);
+//   NT2_DISPLAY(yi);
+  
  }
